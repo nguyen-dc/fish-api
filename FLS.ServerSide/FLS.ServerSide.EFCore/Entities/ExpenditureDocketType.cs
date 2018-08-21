@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FLS.ServerSide.EFCore.Entities
 {
-    public partial class ReceiptType
+    public partial class ExpenditureDocketType
     {
         public int Id { get; set; }
         public string Name { get; set; }

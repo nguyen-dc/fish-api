@@ -7,9 +7,10 @@ namespace FLS.ServerSide.EFCore.Entities
     {
         public int Id { get; set; }
         public int ProductId { get; set; }
+        public int WarehouseId { get; set; }
         public DateTime Month { get; set; }
-        public decimal? PreviousCost { get; set; }
-        public decimal? Cost { get; set; }
+        public decimal? PreviousCapitalCost { get; set; }
+        public decimal? CapitalCost1 { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string CreatedUser { get; set; }
         public DateTime? UpdatedDate { get; set; }

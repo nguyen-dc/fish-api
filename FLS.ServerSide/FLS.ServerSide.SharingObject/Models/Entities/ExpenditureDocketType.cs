@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FLS.ServerSide.SharingObject
 {
-    public partial class ExpenditureTypeModel
+    public partial class ExpenditureDocketTypeModel
     {
         public int Id { get; set; }
         public string Name { get; set; }

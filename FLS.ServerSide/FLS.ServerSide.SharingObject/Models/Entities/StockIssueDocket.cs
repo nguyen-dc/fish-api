@@ -11,6 +11,7 @@ namespace FLS.ServerSide.SharingObject
         public int? CustomerId { get; set; }
         public string CustomerName { get; set; }
         public string DocketNumber { get; set; }
+        public string DocketTemplateCode { get; set; }
         public DateTime? IssueDate { get; set; }
         public decimal Vat { get; set; }
         public decimal Amount { get; set; }

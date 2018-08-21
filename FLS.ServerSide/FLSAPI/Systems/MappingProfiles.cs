@@ -14,7 +14,7 @@ namespace FLS.ServerSide.API.Systems
         {
             // ************ MAPS MODEL & ENTITIES ********************************* //
             CreateMap<CustomerModel, Customer>(MemberList.Source).ReverseMap();
-            CreateMap<ExpenditureTypeModel, ReceiptType>(MemberList.Source).ReverseMap();
+            CreateMap<ExpenditureDocketTypeModel, ExpenditureDocketType>(MemberList.Source).ReverseMap();
             CreateMap<FarmingSeasonModel, FarmingSeason>(MemberList.Source).ReverseMap();
             CreateMap<FarmRegionModel, FarmRegion>(MemberList.Source).ReverseMap();
             CreateMap<FishPondModel, FishPond>(MemberList.Source).ReverseMap();
@@ -54,7 +54,7 @@ namespace FLS.ServerSide.API.Systems
                 .ForMember(d => d.id, m => m.MapFrom(s => s.Id))
                 .ForMember(d => d.name, m => m.MapFrom(s => s.Name))
                 .ForMember(d => d.description, m => m.MapFrom(s => s.Description));
-            CreateMap<ReceiptType, IdNameModel>(MemberList.Destination)
+            CreateMap<ExpenditureDocketType, IdNameModel>(MemberList.Destination)
                 .ForMember(d => d.id, m => m.MapFrom(s => s.Id))
                 .ForMember(d => d.name, m => m.MapFrom(s => s.Name))
                 .ForMember(d => d.description, m => m.MapFrom(s => s.Description));

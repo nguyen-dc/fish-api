@@ -3,17 +3,17 @@ using System.Collections.Generic;
 
 namespace FLS.ServerSide.EFCore.Entities
 {
-    public partial class StockIssueReceipt
+    public partial class ExpenditureDocket
     {
         public int Id { get; set; }
-        public int StockIssueDocketId { get; set; }
-        public int StockIssueReceiptTypeId { get; set; }
+        public int StockDocketId { get; set; }
         public int WarehouseId { get; set; }
-        public DateTime ReceiptDate { get; set; }
-        public int CustomerId { get; set; }
-        public string CustomerFullName { get; set; }
-        public string CustomerPhoneNumber { get; set; }
-        public decimal? TotalAmount { get; set; }
+        public DateTime ExpendDate { get; set; }
+        public int PartnerId { get; set; }
+        public string PartnerName { get; set; }
+        public decimal Vat { get; set; }
+        public decimal Amount { get; set; }
+        public decimal TotalAmount { get; set; }
         public decimal? UnpaidAmount { get; set; }
         public string BillCode { get; set; }
         public string BillSerial { get; set; }
