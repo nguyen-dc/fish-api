@@ -3,19 +3,17 @@ using System.Collections.Generic;
 
 namespace FLS.ServerSide.EFCore.Entities
 {
-    public partial class FeedConversionRate
+    public partial class ExpenditureDocketDetail
     {
         public int Id { get; set; }
-        public int FarmingSeasonId { get; set; }
+        public int ExpenditureDocketId { get; set; }
+        public int ExpenditureTypeId { get; set; }
         public int ProductId { get; set; }
-        public string ProductName { get; set; }
-        public DateTime SurveyDate { get; set; }
-        public decimal Weight { get; set; }
-        public decimal Quantity { get; set; }
-        public decimal MassAmount { get; set; }
-        public decimal Fcr { get; set; }
-        public int? LostPercent { get; set; }
-        public bool? IsAuto { get; set; }
+        public string Title { get; set; }
+        public int VatPercent { get; set; }
+        public decimal Vat { get; set; }
+        public decimal Amount { get; set; }
+        public decimal TotalAmount { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string CreatedUser { get; set; }
         public DateTime? UpdatedDate { get; set; }

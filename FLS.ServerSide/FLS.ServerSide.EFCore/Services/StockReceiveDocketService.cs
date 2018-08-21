@@ -19,9 +19,10 @@ namespace FLS.ServerSide.EFCore.Services
         public async Task<PagedList<StockReceiveDocket>> GetList(PageFilterModel _model)
         {
             _model.Key = string.IsNullOrWhiteSpace(_model.Key) ? null : _model.Key.Trim();
+
             var items = await context.StockReceiveDocket.Where(i => 
                         i.IsDeleted == false
-                        &&(_model.Key == null || i.SupplierName.Contains(_model.Key))
+                       // &&(_model.Key == null || i..Contains(_model.Key))
                     ).GetPagedList(_model.Page, _model.PageSize);
             return items;
         }

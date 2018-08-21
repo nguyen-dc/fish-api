@@ -20,7 +20,7 @@ namespace FLS.ServerSide.API.Controllers
         readonly IProductGroupBusiness busProductGroup;
         readonly IProductSubgroupBusiness busProductSubgroup;
         readonly IProductUnitBusiness busProductUnit;
-        readonly IReceiptTypeBusiness busReceiptType;
+        readonly IExpenditureDocketTypeBusiness busExpenditureDocketType;
         readonly IStockIssueDocketTypeBusiness busStockIssueDocketType;
         readonly IStockReceiveDocketTypeBusiness busStockReceiveDocketType;
         readonly ITaxPercentBusiness busTaxPercent;
@@ -33,7 +33,7 @@ namespace FLS.ServerSide.API.Controllers
             IProductGroupBusiness _busProductGroup,
             IProductSubgroupBusiness _busProductSubgroup,
             IProductUnitBusiness _busProductUnit,
-            IReceiptTypeBusiness _busReceiptType,
+            IExpenditureDocketTypeBusiness _busExpenditureDocketType,
             IStockIssueDocketTypeBusiness _busStockIssueDocketType,
             IStockReceiveDocketTypeBusiness _busStockReceiveDocketType,
             ITaxPercentBusiness _busTaxPercent,
@@ -47,7 +47,7 @@ namespace FLS.ServerSide.API.Controllers
             busProductGroup = _busProductGroup;
             busProductSubgroup = _busProductSubgroup;
             busProductUnit = _busProductUnit;
-            busReceiptType = _busReceiptType;
+            busExpenditureDocketType = _busExpenditureDocketType;
             busStockIssueDocketType = _busStockIssueDocketType;
             busStockReceiveDocketType = _busStockReceiveDocketType;
             busTaxPercent = _busTaxPercent;
@@ -84,10 +84,10 @@ namespace FLS.ServerSide.API.Controllers
             var result = await busProductUnit.GetCache();
             return Ok(new ApiResponse<List<IdNameModel>>(result));
         }
-        [HttpGet("receipt-types")]
-        public async Task<IActionResult> ReceiptTypes()
+        [HttpGet("expenditure-docket-types")]
+        public async Task<IActionResult> ExpenditureDocketTypes()
         {
-            var result = await busReceiptType.GetCache();
+            var result = await busExpenditureDocketType.GetCache();
             return Ok(new ApiResponse<List<IdNameModel>>(result));
         }
         [HttpGet("stock-issue-docket-types")]

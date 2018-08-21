@@ -7,8 +7,9 @@ namespace FLS.ServerSide.SharingObject
     {
         public int Id { get; set; }
         public int ProductId { get; set; }
+        public int WarehouseId { get; set; }
         public DateTime Month { get; set; }
         public decimal? PreviousCapitalCost { get; set; }
-        public decimal? CapitalCost { get; set; }
+        public decimal? CapitalCost1 { get; set; }
     }
 }

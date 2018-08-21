@@ -14,6 +14,7 @@ namespace FLS.ServerSide.SharingObject
         public decimal Quantity { get; set; }
         public decimal MassAmount { get; set; }
         public decimal Fcr { get; set; }
-        public bool IsAuto { get; set; }
+        public int? LostPercent { get; set; }
+        public bool? IsAuto { get; set; }
     }
 }

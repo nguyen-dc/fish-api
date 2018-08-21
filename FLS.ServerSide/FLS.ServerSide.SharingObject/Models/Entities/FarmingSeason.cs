@@ -11,6 +11,6 @@ namespace FLS.ServerSide.SharingObject
         public DateTime StartFarmDate { get; set; }
         public DateTime FinishFarmDateExpected { get; set; }
         public DateTime? FinishFarmDate { get; set; }
-        public bool? IsFinished { get; set; }    
-	}
+        public bool? IsFinished { get; set; }
+    }
 }

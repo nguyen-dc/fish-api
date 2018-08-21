@@ -10,12 +10,9 @@ using FLS.ServerSide.EFCore.Entities;
 using FLS.ServerSide.EFCore.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -69,7 +66,7 @@ namespace FLS.ServerSide.API
             services.AddScoped<IProductGroupBusiness, ProductGroupBusiness>();
             services.AddScoped<IProductSubgroupBusiness, ProductSubgroupBusiness>();
             services.AddScoped<IProductUnitBusiness, ProductUnitBusiness>();
-            services.AddScoped<IReceiptTypeBusiness, ReceiptTypeBusiness>();
+            services.AddScoped<IExpenditureDocketTypeBusiness, ExpenditureDocketTypeBusiness>();
             services.AddScoped<IStockIssueDocketBusiness, StockIssueDocketBusiness>();
             services.AddScoped<IStockIssueDocketTypeBusiness, StockIssueDocketTypeBusiness>();
             services.AddScoped<IStockReceiveDocketBusiness, StockReceiveDocketBusiness>();
@@ -88,7 +85,7 @@ namespace FLS.ServerSide.API
             services.AddScoped<IProductGroupService, ProductGroupService>();
             services.AddScoped<IProductSubgroupService, ProductSubgroupService>();
             services.AddScoped<IProductUnitService, ProductUnitService>();
-            services.AddScoped<IReceiptTypeService, ReceiptTypeService>();
+            services.AddScoped<IExpenditureDocketTypeService, ExpenditureDocketTypeService>();
             services.AddScoped<IStockIssueDocketService, StockIssueDocketService>();
             services.AddScoped<IStockIssueDocketTypeService, StockIssueDocketTypeService>();
             services.AddScoped<IStockReceiveDocketService, StockReceiveDocketService>();

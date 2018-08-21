@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FLS.ServerSide.EFCore.Entities
+namespace FLS.ServerSide.SharingObject
 {
-    public partial class StockReceiveDocketDetail
+    public partial class StockReceiveDocketDetailModel
     {
         public int Id { get; set; }
         public int StockReceiveDocketId { get; set; }
@@ -17,12 +17,5 @@ namespace FLS.ServerSide.EFCore.Entities
         public decimal Vat { get; set; }
         public decimal Amount { get; set; }
         public decimal TotalAmount { get; set; }
-        public DateTime? CreatedDate { get; set; }
-        public string CreatedUser { get; set; }
-        public DateTime? UpdatedDate { get; set; }
-        public string UpdatedUser { get; set; }
-        public bool IsDeleted { get; set; }
-        public string DeletedUser { get; set; }
-        public DateTime? DeletedDate { get; set; }
     }
 }

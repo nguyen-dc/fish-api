@@ -58,11 +58,11 @@ namespace FLS.ServerSide.SharingObject
         public const string PRODUCT_UNIT_MODIFY = "api/product-units/{id}/modify";
         public const string PRODUCT_UNIT_REMOVE = "api/product-units/{id}/remove";
         // EXPENDITURE_TYPE
-        public const string EXPENDITURE_TYPE_SEARCH = "api/receipt-types";
-        public const string EXPENDITURE_TYPE_DETAIL = "api/receipt-types/{id}";
-        public const string EXPENDITURE_TYPE_ADD = "api/receipt-types/add";
-        public const string EXPENDITURE_TYPE_MODIFY = "api/receipt-types/{id}/modify";
-        public const string EXPENDITURE_TYPE_REMOVE = "api/receipt-types/{id}/remove";
+        public const string EXPENDITURE_TYPE_SEARCH = "api/expenditure-docket-types";
+        public const string EXPENDITURE_TYPE_DETAIL = "api/expenditure-docket-types/{id}";
+        public const string EXPENDITURE_TYPE_ADD = "api/expenditure-docket-types/add";
+        public const string EXPENDITURE_TYPE_MODIFY = "api/expenditure-docket-types/{id}/modify";
+        public const string EXPENDITURE_TYPE_REMOVE = "api/expenditure-docket-types/{id}/remove";
         // STOCK_ISSUE_DOCKET
         public const string STOCK_ISSUE_DOCKET_SEARCH = "api/stock-issue-dockets";
         public const string STOCK_ISSUE_DOCKET_DETAIL = "api/stock-issue-dockets/{id}";
@@ -114,7 +114,7 @@ namespace FLS.ServerSide.SharingObject
         public const string WAREHOUSE_TYPE_REMOVE = "api/warehouse-types/{id}/remove";
 
         // -- CACHE -- //
-        public const string CACHE_EXPENDITURE_TYPE = "api/cache/receipt-types";
+        public const string CACHE_EXPENDITURE_TYPE = "api/cache/expenditure-docket-types";
         public const string CACHE_FARM_REGION = "api/cache/farm-regions";
         public const string CACHE_FISH_POND = "api/cache/fish-ponds";
         public const string CACHE_PRODUCT_GROUP = "api/cache/product-groups";

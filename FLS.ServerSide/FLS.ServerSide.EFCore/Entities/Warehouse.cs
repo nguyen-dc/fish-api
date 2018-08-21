@@ -7,6 +7,7 @@ namespace FLS.ServerSide.EFCore.Entities
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public int FarmRegionId { get; set; }
         public int DefaultWarehouseId { get; set; }
         public int WarehouseTypeId { get; set; }
         public DateTime? CreatedDate { get; set; }
