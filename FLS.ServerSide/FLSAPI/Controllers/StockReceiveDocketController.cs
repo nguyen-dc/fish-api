@@ -31,10 +31,10 @@ namespace FLS.ServerSide.API.Controllers
         public async Task<IActionResult> Get(int _id)
         {
             var result = await busStockReceiveDocket.GetDetail(_id);
-            return Ok(new ApiResponse<StockReceiveDocketModel>(result));
+            return Ok(new ApiResponse<ImportStockModel>(result));
         }
         [HttpPost("add")]
-        public async Task<IActionResult> Add([FromBody]StockReceiveDocketModel _model)
+        public async Task<IActionResult> Add([FromBody]ImportStockModel _model)
         {
             var result = await busStockReceiveDocket.Add(_model);
             return Ok(new ApiResponse<int>(result));
