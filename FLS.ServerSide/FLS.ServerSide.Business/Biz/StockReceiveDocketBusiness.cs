@@ -22,14 +22,48 @@ namespace FLS.ServerSide.Business.Biz
         {
             return iMapper.Map<PagedList<StockReceiveDocketModel>>(await svcStockReceiveDocket.GetList(_model));
         }
-        public async Task<StockReceiveDocketModel> GetDetail(int _id)
+        public async Task<ImportStockModel> GetDetail(int _id)
         {
-            return iMapper.Map<StockReceiveDocketModel>(await svcStockReceiveDocket.GetDetail(_id));
+            ImportStockModel result = new ImportStockModel();
+            //return iMapper.Map<ImportStockModel>(await svcStockReceiveDocket.GetDetail(_id));
+            return result;
         }
-        public async Task<int> Add(StockReceiveDocketModel _model)
+        public async Task<int> Add(ImportStockModel _model)
         {
-            StockReceiveDocket entity = iMapper.Map<StockReceiveDocket>(_model);
-            return await svcStockReceiveDocket.Add(entity);
+            StockReceiveDocket docket = iMapper.Map<StockReceiveDocket>(_model.ReceiveDocket);
+            List<StockReceiveDocketDetail> docketDetails = iMapper.Map<List<StockReceiveDocketDetail>>(_model.ReceiveDocketDetails);
+            List<ExpenditureDocketDetail> expendDetails = iMapper.Map<List<ExpenditureDocketDetail>>(_model.PaySlipDetails);
+            // cập nhật chi tiết phiếu nhập
+            decimal totalVAT = 0;
+            decimal totalAmount = 0;
+            //foreach(var model in docketDetails)
+            //{
+            //    model.Amount = model.UnitPrice * model.Quantity;
+            //    model.Vat = model.Amount * (model.VatPercent / 100);
+            //    model.TotalAmount = model.Amount + model.Vat;
+            //    totalVAT += model.Vat;
+            //    totalAmount += model.Amount;
+            //}
+            //// cập nhật phiếu nhập
+            //docket.Vat = totalVAT;
+            //docket.Amount = totalAmount;
+            //docket.TotalAmount = totalAmount + totalVAT;
+
+            //// cập nhật chi tiết phiếu chi
+            //foreach (var model in expendDetails)
+            //{
+            //    model.Amount = model.UnitPrice * model.Quantity;
+            //    model.Vat = model.Amount * (model.VatPercent / 100);
+            //    model.TotalAmount = model.Amount + model.Vat;
+            //    totalVAT += model.Vat;
+            //    totalAmount += model.Amount;
+            //}
+                // cập nhật phiếu chi
+
+                ExpenditureDocket expend = new ExpenditureDocket();
+            //expend.
+            //return await svcStockReceiveDocket.Add(entity);
+            return 0;
         }
         public async Task<bool> Modify(int _id, StockReceiveDocketModel _model)
         {

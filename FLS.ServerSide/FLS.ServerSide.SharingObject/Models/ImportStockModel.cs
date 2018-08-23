@@ -6,8 +6,8 @@ namespace FLS.ServerSide.SharingObject
 {
     public class ImportStockModel
     {
-       // public StockReceiveDocketModel ReceiveDocket { get; set; }
-       // public List<StockReceiveDocketDetailModel> ReceiveDocketDetails { get; set; }
-       // public List<StockReceivePaySlipDetailModel> PaySlipDetails { get; set; }
+        public StockReceiveDocketModel ReceiveDocket { get; set; }
+        public List<StockReceiveDocketDetailModel> ReceiveDocketDetails { get; set; }
+        public List<ExpenditureDocketDetailModel> PaySlipDetails { get; set; }
     }
 }

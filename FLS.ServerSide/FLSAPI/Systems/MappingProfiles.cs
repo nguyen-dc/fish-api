@@ -14,6 +14,8 @@ namespace FLS.ServerSide.API.Systems
         {
             // ************ MAPS MODEL & ENTITIES ********************************* //
             CreateMap<CustomerModel, Customer>(MemberList.Source).ReverseMap();
+            CreateMap<ExpenditureDocketModel, ExpenditureDocket>(MemberList.Source).ReverseMap();
+            CreateMap<ExpenditureDocketDetailModel, ExpenditureDocketDetail>(MemberList.Source).ReverseMap();
             CreateMap<ExpenditureDocketTypeModel, ExpenditureDocketType>(MemberList.Source).ReverseMap();
             CreateMap<FarmingSeasonModel, FarmingSeason>(MemberList.Source).ReverseMap();
             CreateMap<FarmRegionModel, FarmRegion>(MemberList.Source).ReverseMap();
@@ -23,8 +25,10 @@ namespace FLS.ServerSide.API.Systems
             CreateMap<ProductSubgroupModel, ProductSubgroup>(MemberList.Source).ReverseMap();
             CreateMap<ProductUnitModel, ProductUnit>(MemberList.Source).ReverseMap();
             CreateMap<StockIssueDocketModel, StockIssueDocket>(MemberList.Source).ReverseMap();
+            CreateMap<StockIssueDocketDetailModel, StockIssueDocketDetail>(MemberList.Source).ReverseMap();
             CreateMap<StockIssueDocketTypeModel, StockIssueDocketType>(MemberList.Source).ReverseMap();
             CreateMap<StockReceiveDocketModel, StockReceiveDocket>(MemberList.Source).ReverseMap();
+            CreateMap<StockReceiveDocketDetailModel, StockReceiveDocketDetail>(MemberList.Source).ReverseMap();
             CreateMap<StockReceiveDocketTypeModel, StockReceiveDocketType>(MemberList.Source).ReverseMap();
             CreateMap<SupplierModel, Supplier>(MemberList.Source).ReverseMap();
             CreateMap<SupplierBranchModel, SupplierBranch>(MemberList.Source).ReverseMap();
@@ -53,10 +57,17 @@ namespace FLS.ServerSide.API.Systems
             CreateMap<ProductSubgroup, IdNameModel>(MemberList.Destination)
                 .ForMember(d => d.id, m => m.MapFrom(s => s.Id))
                 .ForMember(d => d.name, m => m.MapFrom(s => s.Name))
+                .ForMember(d => d.parentId, m => m.MapFrom(s => s.ProductGroupId))
                 .ForMember(d => d.description, m => m.MapFrom(s => s.Description));
+            CreateMap<ProductUnit, IdNameModel>(MemberList.Destination)
+               .ForMember(d => d.id, m => m.MapFrom(s => s.Id))
+               .ForMember(d => d.name, m => m.MapFrom(s => s.Name))
+               .ForMember(d => d.check, m => m.MapFrom(s => s.HasScale))
+               .ForMember(d => d.description, m => m.MapFrom(s => s.HasScale ? "Có phần thập phân" : "Không có phần thập phân"));
             CreateMap<ExpenditureDocketType, IdNameModel>(MemberList.Destination)
                 .ForMember(d => d.id, m => m.MapFrom(s => s.Id))
                 .ForMember(d => d.name, m => m.MapFrom(s => s.Name))
+                .ForMember(d => d.check, m => m.MapFrom(s => s.IsReceipt))
                 .ForMember(d => d.description, m => m.MapFrom(s => s.Description));
             CreateMap<TaxPercent, IdNameModel>(MemberList.Destination)
                 .ForMember(d => d.id, m => m.MapFrom(s => s.Id))
