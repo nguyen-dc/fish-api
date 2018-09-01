@@ -26,10 +26,11 @@ namespace FLS.ServerSide.Business.Biz
         {
             return iMapper.Map<StockIssueDocketModel>(await svcStockIssueDocket.GetDetail(_id));
         }
-        public async Task<int> Add(StockIssueDocketModel _model)
+        public async Task<int> Add(ExportStockModel _model)
         {
-            StockIssueDocket entity = iMapper.Map<StockIssueDocket>(_model);
-            return await svcStockIssueDocket.Add(entity);
+            //    StockIssueDocket entity = iMapper.Map<StockIssueDocket>(_model);
+            //    return await svcStockIssueDocket.Add(entity);
+            return 0;
         }
         public async Task<bool> Modify(int _id, StockIssueDocketModel _model)
         {

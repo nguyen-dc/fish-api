@@ -11,7 +11,7 @@ namespace FLS.ServerSide.Business.Interfaces
     {
         Task<PagedList<StockIssueDocketModel>> GetList(PageFilterModel _model);
         Task<StockIssueDocketModel> GetDetail(int _id);
-        Task<int> Add(StockIssueDocketModel _model);
+        Task<int> Add(ExportStockModel _model);
         Task<bool> Modify(int _id, StockIssueDocketModel _model);
         Task<bool> Remove(int _id);
     }

@@ -29,5 +29,6 @@ namespace FLS.ServerSide.EFCore.Entities
         public bool IsDeleted { get; set; }
         public string DeletedUser { get; set; }
         public DateTime? DeletedDate { get; set; }
+
     }
 }
