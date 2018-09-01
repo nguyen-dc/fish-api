@@ -34,7 +34,7 @@ namespace FLS.ServerSide.API.Controllers
             return Ok(new ApiResponse<StockIssueDocketModel>(result));
         }
         [HttpPost("add")]
-        public async Task<IActionResult> Add([FromBody]StockIssueDocketModel _model)
+        public async Task<IActionResult> Add([FromBody]ExportStockModel _model)
         {
             var result = await busStockIssueDocket.Add(_model);
             return Ok(new ApiResponse<int>(result));
