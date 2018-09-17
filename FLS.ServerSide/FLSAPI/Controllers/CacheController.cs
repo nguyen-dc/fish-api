@@ -78,6 +78,9 @@ namespace FLS.ServerSide.API.Controllers
             var result = await busProductSubgroup.GetCache();
             return Ok(new ApiResponse<List<IdNameModel>>(result));
         }
+        /// <returns>
+        /// check: HasScale
+        /// </returns>
         [HttpGet("product-units")]
         public async Task<IActionResult> ProductUnits()
         {
@@ -90,12 +93,20 @@ namespace FLS.ServerSide.API.Controllers
             var result = await busExpenditureDocketType.GetCache();
             return Ok(new ApiResponse<List<IdNameModel>>(result));
         }
+        /// <returns>
+        /// check: ReceiptNeeded
+        /// belongId: ReceiptTypeId
+        /// </returns>
         [HttpGet("stock-issue-docket-types")]
         public async Task<IActionResult> StockIssueDocketTypes()
         {
             var result = await busStockIssueDocketType.GetCache();
             return Ok(new ApiResponse<List<IdNameModel>>(result));
         }
+        /// <returns>
+        /// check: PayslipNeeded
+        /// belongId: PayslipTypeId
+        /// </returns>
         [HttpGet("stock-receive-docket-types")]
         public async Task<IActionResult> StockReceiveDocketTypes()
         {

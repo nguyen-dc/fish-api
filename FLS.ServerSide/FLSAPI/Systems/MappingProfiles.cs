@@ -38,6 +38,11 @@ namespace FLS.ServerSide.API.Systems
             // ******************************************************************** //
 
             // ************ MAPS ENTITIES TO CACHE ******************************** //
+            CreateMap<ExpenditureDocketType, IdNameModel>(MemberList.Destination)
+                .ForMember(d => d.id, m => m.MapFrom(s => s.Id))
+                .ForMember(d => d.name, m => m.MapFrom(s => s.Name))
+                .ForMember(d => d.check, m => m.MapFrom(s => s.IsReceipt))
+                .ForMember(d => d.description, m => m.MapFrom(s => s.Description));
             CreateMap<FarmingSeason, IdNameModel>(MemberList.Destination)
                 .ForMember(d => d.id, m => m.MapFrom(s => s.Id))
                 .ForMember(d => d.name, m => m.MapFrom(s => s.Name))
@@ -64,11 +69,18 @@ namespace FLS.ServerSide.API.Systems
                .ForMember(d => d.name, m => m.MapFrom(s => s.Name))
                .ForMember(d => d.check, m => m.MapFrom(s => s.HasScale))
                .ForMember(d => d.description, m => m.MapFrom(s => s.HasScale ? "Có phần thập phân" : "Không có phần thập phân"));
-            CreateMap<ExpenditureDocketType, IdNameModel>(MemberList.Destination)
+            CreateMap<StockIssueDocketType, IdNameModel>(MemberList.Destination)
                 .ForMember(d => d.id, m => m.MapFrom(s => s.Id))
                 .ForMember(d => d.name, m => m.MapFrom(s => s.Name))
-                .ForMember(d => d.check, m => m.MapFrom(s => s.IsReceipt))
-                .ForMember(d => d.description, m => m.MapFrom(s => s.Description));
+                .ForMember(d => d.check, m => m.MapFrom(s => s.ReceiptNeeded))
+                .ForMember(d => d.belongId, m => m.MapFrom(s => s.ReceiptTypeId))
+                .ForMember(d => d.description, m => m.MapFrom(s => s.Name));
+            CreateMap<StockReceiveDocketType, IdNameModel>(MemberList.Destination)
+                .ForMember(d => d.id, m => m.MapFrom(s => s.Id))
+                .ForMember(d => d.name, m => m.MapFrom(s => s.Name))
+                .ForMember(d => d.check, m => m.MapFrom(s => s.PayslipNeeded))
+                .ForMember(d => d.belongId, m => m.MapFrom(s => s.PayslipTypeId))
+                .ForMember(d => d.description, m => m.MapFrom(s => s.Name));
             CreateMap<TaxPercent, IdNameModel>(MemberList.Destination)
                 .ForMember(d => d.id, m => m.MapFrom(s => s.Id))
                 .ForMember(d => d.name, m => m.MapFrom(s => s.Name))

@@ -16,6 +16,7 @@ namespace FLS.ServerSide.SharingObject
         public string BillCode { get; set; }
         public string BillSerial { get; set; }
         public string BillTemplateCode { get; set; }
+        public DateTime? BillDate { get; set; }
         public List<StockReceiveDocketDetailModel> ReceiveDocketDetails { get; set; }
     }
 }

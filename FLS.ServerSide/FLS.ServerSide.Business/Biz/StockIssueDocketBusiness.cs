@@ -11,11 +11,25 @@ namespace FLS.ServerSide.Business.Biz
 {
     public class StockIssueDocketBusiness : IStockIssueDocketBusiness
     {
+        private static FLSDbContext context;
         private readonly IStockIssueDocketService svcStockIssueDocket;
+        private readonly IStockIssueDocketDetailService svcStockIssueDocketDetail;
+        private readonly IExpenditureDocketService svcExpenditureDocket;
+        private readonly IExpenditureDocketDetailService svcExpenditureDocketDetail;
         private readonly IMapper iMapper;
-        public StockIssueDocketBusiness(IStockIssueDocketService _svcStockIssueDocket, IMapper _iMapper)
+        public StockIssueDocketBusiness(
+            FLSDbContext _context,
+            IStockIssueDocketService _svcStockIssueDocket,
+            IStockIssueDocketDetailService _svcStockIssueDocketDetail,
+            IExpenditureDocketService _svcExpenditureDocket,
+            IExpenditureDocketDetailService _svcExpenditureDocketDetail,
+            IMapper _iMapper)
         {
+            context = _context;
             svcStockIssueDocket = _svcStockIssueDocket;
+            svcStockIssueDocketDetail = _svcStockIssueDocketDetail;
+            svcExpenditureDocket = _svcExpenditureDocket;
+            svcExpenditureDocketDetail = _svcExpenditureDocketDetail;
             iMapper = _iMapper;
         }
         public async Task<PagedList<StockIssueDocketModel>> GetList(PageFilterModel _model)
@@ -28,9 +42,65 @@ namespace FLS.ServerSide.Business.Biz
         }
         public async Task<int> Add(ExportStockModel _model)
         {
-            //    StockIssueDocket entity = iMapper.Map<StockIssueDocket>(_model);
-            //    return await svcStockIssueDocket.Add(entity);
-            return 0;
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                StockIssueDocket issueDocket = iMapper.Map<StockIssueDocket>(_model.IssueDocket);
+                issueDocket.CustomerId = _model.Receipt.PartnerId;
+                issueDocket.CustomerName = _model.Receipt.PartnerName;
+                ExpenditureDocket receipt = iMapper.Map<ExpenditureDocket>(_model.Receipt);
+                receipt.Amount = issueDocket.Amount;
+                receipt.Vat = issueDocket.Vat;
+                receipt.WarehouseId = issueDocket.WarehouseId;
+                receipt.CreatedUser = "admin";
+
+                List<StockIssueDocketDetail> docketDetails = iMapper.Map<List<StockIssueDocketDetail>>(_model.DocketDetails);
+                List<ExpenditureDocketDetail> expendDetails = new List<ExpenditureDocketDetail>();
+                decimal orderVAT = 0;
+                decimal orderAmount = 0;
+                decimal orderTotalAmount = 0;
+                foreach (var item in docketDetails)
+                {
+                    item.Amount = item.Quantity * item.UnitPrice;
+                    item.Vat = item.Amount * (item.VatPercent / 100);
+                    item.TotalAmount = item.Amount + item.Vat;
+
+                    ExpenditureDocketDetail exDetail = new ExpenditureDocketDetail
+                    {
+                        ExpenditureDocketId = receipt.Id,
+                        Amount = item.Amount,
+                        Vat = item.Vat,
+                        TotalAmount = item.TotalAmount
+                    };
+                    expendDetails.Add(exDetail);
+
+                    orderVAT += item.Vat;
+                    orderAmount += item.Amount;
+                    orderTotalAmount += item.TotalAmount;
+                }
+                issueDocket.Vat = orderVAT;
+                issueDocket.Amount = orderAmount;
+                issueDocket.TotalAmount = orderTotalAmount;
+                receipt.Vat = orderVAT;
+                receipt.Amount = orderAmount;
+                receipt.TotalAmount = orderTotalAmount;
+                // insert
+                issueDocket.Id = await svcStockIssueDocket.Add(issueDocket);
+                receipt.StockDocketId = issueDocket.Id;
+                receipt.Id = await svcExpenditureDocket.Add(receipt);
+
+                foreach (var item in docketDetails)
+                {
+                    item.StockIssueDocketId = issueDocket.Id;
+                    item.Id = await svcStockIssueDocketDetail.Add(item);
+                }
+                foreach (var item in expendDetails)
+                {
+                    item.ExpenditureDocketId = receipt.Id;
+                    item.Id = await svcExpenditureDocketDetail.Add(item);
+                }
+                transaction.Commit();
+                return issueDocket.Id;
+            }
         }
         public async Task<bool> Modify(int _id, StockIssueDocketModel _model)
         {

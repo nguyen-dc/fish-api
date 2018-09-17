@@ -33,8 +33,9 @@ namespace FLS.ServerSide.EFCore.Services
         public async Task<int> Add(StockIssueDocket _model, bool _isSaveChange = true)
         {
             _model.CreatedUser = "admin";
-            _model.CreatedDate = DateTime.Now;
-            await context.AddAsync(_model);
+            _model.ExecutorCode = "admin";
+            _model.ExecutedDate = DateTime.UtcNow;
+            context.StockIssueDocket.Add(_model);
             if (_isSaveChange) await context.SaveChangesAsync();
             return _model.Id;
         }

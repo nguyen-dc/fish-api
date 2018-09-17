@@ -49,6 +49,7 @@ namespace FLS.ServerSide.Business.Biz
                 exp.BillCode = item.BillCode;
                 exp.BillSerial = item.BillSerial;
                 exp.BillTemplateCode = item.BillTemplateCode;
+                exp.BillDate = item.BillDate;
                 exp.CreatedUser = "admin";
                 exp.ExpendDate = docket.ExecutedDate;
                 exp.Amount = 0;
