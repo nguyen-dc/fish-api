@@ -30,30 +30,30 @@ namespace FLS.ServerSide.EFCore.Services
             var item = await context.StockIssueDocket.FirstOrDefaultAsync(x => x.Id == _id && x.IsDeleted == false);
             return item;
         }
-        public async Task<int> Add(StockIssueDocket _model, bool _isSaveChange = true)
+        public async Task<int> Add(StockIssueDocket _model)
         {
             _model.CreatedUser = "admin";
             _model.ExecutorCode = "admin";
             _model.ExecutedDate = DateTime.UtcNow;
             context.StockIssueDocket.Add(_model);
-            if (_isSaveChange) await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return _model.Id;
         }
-        public async Task<bool> Modify(StockIssueDocket _model, bool _isSaveChange = true)
+        public async Task<bool> Modify(StockIssueDocket _model)
         {
             _model.UpdatedUser = "admin";
             _model.UpdatedDate = DateTime.Now;
             context.Update(_model);
-            if (_isSaveChange) await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
-        public async Task<bool> Remove(int _id, bool _isSaveChange = true)
+        public async Task<bool> Remove(int _id)
         {
             StockIssueDocket item = await context.StockIssueDocket.Where(i => i.Id == _id && i.IsDeleted == true).FirstOrDefaultAsync();
             if (item == default(StockIssueDocket)) return false;
             item.IsDeleted = true;
             context.Entry(item).Property(x => x.IsDeleted).IsModified = true;
-            if (_isSaveChange) await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
     }

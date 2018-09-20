@@ -30,29 +30,29 @@ namespace FLS.ServerSide.EFCore.Services
             var item = await context.WarehouseType.FirstOrDefaultAsync(x => x.Id == _id && x.IsDeleted == false);
             return item;
         }
-        public async Task<int> Add(WarehouseType _model, bool _isSaveChange = true)
+        public async Task<int> Add(WarehouseType _model)
         {
             _model.CreatedUser = "admin";
             _model.CreatedDate = DateTime.Now;
-            await context.AddAsync(_model);
-            if (_isSaveChange) await context.SaveChangesAsync();
+            context.Add(_model);
+            await context.SaveChangesAsync();
             return _model.Id;
         }
-        public async Task<bool> Modify(WarehouseType _model, bool _isSaveChange = true)
+        public async Task<bool> Modify(WarehouseType _model)
         {
             _model.UpdatedUser = "admin";
             _model.UpdatedDate = DateTime.Now;
             context.Update(_model);
-            if (_isSaveChange) await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
-        public async Task<bool> Remove(int _id, bool _isSaveChange = true)
+        public async Task<bool> Remove(int _id)
         {
             WarehouseType item = await context.WarehouseType.Where(i => i.Id == _id && i.IsDeleted == true).FirstOrDefaultAsync();
             if (item == default(WarehouseType)) return false;
             item.IsDeleted = true;
             context.Entry(item).Property(x => x.IsDeleted).IsModified = true;
-            if (_isSaveChange) await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
         public async Task<List<WarehouseType>> GetCache()

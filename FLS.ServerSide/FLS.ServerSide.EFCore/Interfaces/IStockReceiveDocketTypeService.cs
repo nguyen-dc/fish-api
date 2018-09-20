@@ -9,9 +9,9 @@ namespace FLS.ServerSide.EFCore.Services
     {
         Task<PagedList<StockReceiveDocketType>> GetList(PageFilterModel _model);
         Task<StockReceiveDocketType> GetDetail(int _id);
-        Task<int> Add(StockReceiveDocketType _model, bool _isSaveChange = true);
-        Task<bool> Modify(StockReceiveDocketType _model, bool _isSaveChange = true);
-        Task<bool> Remove(int _id, bool _isSaveChange = true);
+        Task<int> Add(StockReceiveDocketType _model);
+        Task<bool> Modify(StockReceiveDocketType _model);
+        Task<bool> Remove(int _id);
         Task<List<StockReceiveDocketType>> GetCache();
     }
 }
