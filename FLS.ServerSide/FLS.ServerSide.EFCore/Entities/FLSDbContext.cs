@@ -224,6 +224,14 @@ namespace FLS.ServerSide.EFCore.Entities
                     .HasColumnName("bill_template_code")
                     .HasColumnType("varchar(20)");
 
+                entity.Property(e => e.BillDate)
+                    .HasColumnName("bill_date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IsReceipt)
+                    .HasColumnName("is_receipt")
+                    .HasColumnType("bit(1)");
+
                 entity.Property(e => e.CreatedDate)
                     .HasColumnName("created_date")
                     .HasColumnType("datetime")

@@ -9,8 +9,8 @@ namespace FLS.ServerSide.EFCore.Services
     {
         Task<PagedList<Customer>> GetList(PageFilterModel _model);
         Task<Customer> GetDetail(int _id);
-        Task<int> Add(Customer _model, bool _isSaveChange = true);
-        Task<bool> Modify(Customer _model, bool _isSaveChange = true);
-        Task<bool> Remove(int _id, bool _isSaveChange = true);
+        Task<int> Add(Customer _model);
+        Task<bool> Modify(Customer _model);
+        Task<bool> Remove(int _id);
     }
 }

@@ -18,6 +18,8 @@ namespace FLS.ServerSide.EFCore.Entities
         public string BillCode { get; set; }
         public string BillSerial { get; set; }
         public string BillTemplateCode { get; set; }
+        public DateTime? BillDate { get; set; }
+        public bool IsReceipt { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string CreatedUser { get; set; }
         public DateTime? UpdatedDate { get; set; }

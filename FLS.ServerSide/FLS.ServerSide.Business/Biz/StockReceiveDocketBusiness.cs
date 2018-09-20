@@ -35,7 +35,7 @@ namespace FLS.ServerSide.Business.Biz
         public async Task<int> Add(ImportStockModel _model)
         {
             StockReceiveDocket docket = iMapper.Map<StockReceiveDocket>(_model.ReceiveDocket);
-            docket.Id = await svcStockReceiveDocket.Add(docket, false);
+            docket.Id = await svcStockReceiveDocket.Add(docket);
 
             decimal totalVAT = 0;
             decimal totalAmount = 0;
@@ -49,6 +49,7 @@ namespace FLS.ServerSide.Business.Biz
                 exp.BillCode = item.BillCode;
                 exp.BillSerial = item.BillSerial;
                 exp.BillTemplateCode = item.BillTemplateCode;
+                exp.BillDate = item.BillDate;
                 exp.CreatedUser = "admin";
                 exp.ExpendDate = docket.ExecutedDate;
                 exp.Amount = 0;
@@ -113,7 +114,7 @@ namespace FLS.ServerSide.Business.Biz
             docket.Vat = totalVAT;
             docket.Amount = totalAmount;
             docket.TotalAmount = totalAmount + totalVAT;
-            await svcStockReceiveDocket.Modify(docket, true);
+            await svcStockReceiveDocket.Modify(docket);
             return docket.Id;
         }
         public async Task<bool> Modify(int _id, StockReceiveDocketModel _model)
