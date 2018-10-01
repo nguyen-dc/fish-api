@@ -126,4 +126,8 @@ namespace FLS.ServerSide.SharingObject
         public const string CACHE_WAREHOUSE = "api/cache/warehouses";
         public const string CACHE_WAREHOUSE_TYPE = "api/cache/warehouse-types";
     }
-}
+    static public class REQUEST_HEADER
+    {
+        public const string USERNAME = "fls-acss-usrnme";
+    }
+    }

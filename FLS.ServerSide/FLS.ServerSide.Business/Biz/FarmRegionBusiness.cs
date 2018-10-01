@@ -2,8 +2,8 @@
 using FLS.ServerSide.Business.Interfaces;
 using FLS.ServerSide.EFCore.Entities;
 using FLS.ServerSide.EFCore.Services;
+using FLS.ServerSide.Model.Scope;
 using FLS.ServerSide.SharingObject;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,6 +11,7 @@ namespace FLS.ServerSide.Business.Biz
 {
     public class FarmRegionBusiness : IFarmRegionBusiness
     {
+        private IScopeContext context;
         private readonly IFarmRegionService svcFarmRegion;
         private readonly IMapper iMapper;
         public FarmRegionBusiness(IFarmRegionService _svcFarmRegion, IMapper _iMapper)

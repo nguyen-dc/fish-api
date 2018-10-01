@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using FLS.ServerSide.API.Systems;
-using FLS.ServerSide.Business.Biz;
-using FLS.ServerSide.Business.Interfaces;
 using FLS.ServerSide.EFCore.Entities;
-using FLS.ServerSide.EFCore.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -57,48 +50,7 @@ namespace FLS.ServerSide.API
 
             // -------- Singleton & Scoped --------
             services.AddSingleton(Configuration);
-            // -- Businesses
-            services.AddScoped<ICustomerBusiness, CustomerBusiness>();
-            services.AddScoped<IFarmingSeasonBusiness, FarmingSeasonBusiness>();
-            services.AddScoped<IFarmRegionBusiness, FarmRegionBusiness>();
-            services.AddScoped<IFishPondBusiness, FishPondBusiness>();
-            services.AddScoped<IProductBusiness, ProductBusiness>();
-            services.AddScoped<IProductGroupBusiness, ProductGroupBusiness>();
-            services.AddScoped<IProductSubgroupBusiness, ProductSubgroupBusiness>();
-            services.AddScoped<IProductUnitBusiness, ProductUnitBusiness>();
-            services.AddScoped<IExpenditureDocketTypeBusiness, ExpenditureDocketTypeBusiness>();
-            services.AddScoped<IStockIssueDocketBusiness, StockIssueDocketBusiness>();
-            services.AddScoped<IStockIssueDocketTypeBusiness, StockIssueDocketTypeBusiness>();
-            services.AddScoped<IStockReceiveDocketBusiness, StockReceiveDocketBusiness>();
-            services.AddScoped<IStockReceiveDocketTypeBusiness, StockReceiveDocketTypeBusiness>();
-            services.AddScoped<ISupplierBusiness, SupplierBusiness>();
-            services.AddScoped<ISupplierBranchBusiness, SupplierBranchBusiness>();
-            services.AddScoped<ITaxPercentBusiness, TaxPercentBusiness>();
-            services.AddScoped<IWarehouseBusiness, WarehouseBusiness>();
-            services.AddScoped<IWarehouseTypeBusiness, WarehouseTypeBusiness>();
-            // -- Services
-            services.AddScoped<ICustomerService, CustomerService>();
-            services.AddScoped<IExpenditureDocketService, ExpenditureDocketService>();
-            services.AddScoped<IExpenditureDocketDetailService, ExpenditureDocketDetailService>();
-            services.AddScoped<IFarmingSeasonService, FarmingSeasonService>();
-            services.AddScoped<IFarmRegionService, FarmRegionService>();
-            services.AddScoped<IFishPondService, FishPondService>();
-            services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IProductGroupService, ProductGroupService>();
-            services.AddScoped<IProductSubgroupService, ProductSubgroupService>();
-            services.AddScoped<IProductUnitService, ProductUnitService>();
-            services.AddScoped<IExpenditureDocketTypeService, ExpenditureDocketTypeService>();
-            services.AddScoped<IStockIssueDocketService, StockIssueDocketService>();
-            services.AddScoped<IStockIssueDocketDetailService, StockIssueDocketDetailService>();
-            services.AddScoped<IStockIssueDocketTypeService, StockIssueDocketTypeService>();
-            services.AddScoped<IStockReceiveDocketService, StockReceiveDocketService>();
-            services.AddScoped<IStockReceiveDocketDetailService, StockReceiveDocketDetailService>();
-            services.AddScoped<IStockReceiveDocketTypeService, StockReceiveDocketTypeService>();
-            services.AddScoped<ISupplierService, SupplierService>();
-            services.AddScoped<ISupplierBranchService, SupplierBranchService>();
-            services.AddScoped<ITaxPercentService, TaxPercentService>();
-            services.AddScoped<IWarehouseService, WarehouseService>();
-            services.AddScoped<IWarehouseTypeService, WarehouseTypeService>();
+            services.AddScopeContext();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -112,6 +64,7 @@ namespace FLS.ServerSide.API
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+            app.UseMiddleware<ScopeContextMiddleware>();
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseMvc(routes =>

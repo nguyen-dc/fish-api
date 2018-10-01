@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FLS.ServerSide.Business.Interfaces;
+using FLS.ServerSide.Model.Scope;
 using FLS.ServerSide.SharingObject;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ namespace FLS.ServerSide.API.Controllers
     public class CacheController : Controller
     {
         readonly IConfiguration config;
+        IScopeContext context;
         readonly IFarmRegionBusiness busFarmRegion;
         readonly IFishPondBusiness busFishPond;
         readonly IProductGroupBusiness busProductGroup;
@@ -28,6 +30,7 @@ namespace FLS.ServerSide.API.Controllers
         readonly IWarehouseTypeBusiness busWarehouseType;
         public CacheController(
             IConfiguration _config,
+            IScopeContext _scopeContext,
             IFarmRegionBusiness _busFarmRegion,
             IFishPondBusiness _busFishPond,
             IProductGroupBusiness _busProductGroup,
@@ -42,6 +45,7 @@ namespace FLS.ServerSide.API.Controllers
             )
         {
             config = _config;
+            context = _scopeContext;
             busFarmRegion = _busFarmRegion;
             busFishPond = _busFishPond;
             busProductGroup = _busProductGroup;
@@ -58,25 +62,25 @@ namespace FLS.ServerSide.API.Controllers
         public async Task<IActionResult> FarmRegions()
         {
             var result = await busFarmRegion.GetCache();
-            return Ok(new ApiResponse<List<IdNameModel>>(result));
+            return Ok(context.WrapResponse(result));
         }
         [HttpGet("fish-ponds")]
         public async Task<IActionResult> FishPonds()
         {
             var result = await busFishPond.GetCache();
-            return Ok(new ApiResponse<List<IdNameModel>>(result));
+            return Ok(context.WrapResponse(result));
         }
         [HttpGet("product-groups")]
         public async Task<IActionResult> ProductGroups()
         {
             var result = await busProductGroup.GetCache();
-            return Ok(new ApiResponse<List<IdNameModel>>(result));
+            return Ok(context.WrapResponse(result));
         }
         [HttpGet("product-subgroups")]
         public async Task<IActionResult> ProductSubgroups()
         {
             var result = await busProductSubgroup.GetCache();
-            return Ok(new ApiResponse<List<IdNameModel>>(result));
+            return Ok(context.WrapResponse(result));
         }
         /// <returns>
         /// check: HasScale
@@ -85,13 +89,13 @@ namespace FLS.ServerSide.API.Controllers
         public async Task<IActionResult> ProductUnits()
         {
             var result = await busProductUnit.GetCache();
-            return Ok(new ApiResponse<List<IdNameModel>>(result));
+            return Ok(context.WrapResponse(result));
         }
         [HttpGet("expenditure-docket-types")]
         public async Task<IActionResult> ExpenditureDocketTypes()
         {
             var result = await busExpenditureDocketType.GetCache();
-            return Ok(new ApiResponse<List<IdNameModel>>(result));
+            return Ok(context.WrapResponse(result));
         }
         /// <returns>
         /// check: ReceiptNeeded
@@ -101,7 +105,7 @@ namespace FLS.ServerSide.API.Controllers
         public async Task<IActionResult> StockIssueDocketTypes()
         {
             var result = await busStockIssueDocketType.GetCache();
-            return Ok(new ApiResponse<List<IdNameModel>>(result));
+            return Ok(context.WrapResponse(result));
         }
         /// <returns>
         /// check: PayslipNeeded
@@ -111,25 +115,25 @@ namespace FLS.ServerSide.API.Controllers
         public async Task<IActionResult> StockReceiveDocketTypes()
         {
             var result = await busStockReceiveDocketType.GetCache();
-            return Ok(new ApiResponse<List<IdNameModel>>(result));
+            return Ok(context.WrapResponse(result));
         }
         [HttpGet("tax-percents")]
         public async Task<IActionResult> TaxPercents()
         {
             var result = await busTaxPercent.GetCache();
-            return Ok(new ApiResponse<List<IdNameModel>>(result));
+            return Ok(context.WrapResponse(result));
         }
         [HttpGet("warehouses")]
         public async Task<IActionResult> Warehouses()
         {
             var result = await busWarehouse.GetCache();
-            return Ok(new ApiResponse<List<IdNameModel>>(result));
+            return Ok(context.WrapResponse(result));
         }
         [HttpGet("warehouse-types")]
         public async Task<IActionResult> WarehouseTypes()
         {
             var result = await busWarehouseType.GetCache();
-            return Ok(new ApiResponse<List<IdNameModel>>(result));
+            return Ok(context.WrapResponse(result));
         }
     }
 }

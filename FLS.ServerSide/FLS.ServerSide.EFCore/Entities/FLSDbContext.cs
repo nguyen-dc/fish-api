@@ -263,7 +263,6 @@ namespace FLS.ServerSide.EFCore.Entities
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.PartnerName)
-                    .IsRequired()
                     .HasColumnName("partner_name")
                     .HasColumnType("varchar(200)");
 
@@ -1617,7 +1616,6 @@ namespace FLS.ServerSide.EFCore.Entities
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.ActuallyReceivedCode)
-                    .IsRequired()
                     .HasColumnName("actually_received_code")
                     .HasColumnType("varchar(50)");
 

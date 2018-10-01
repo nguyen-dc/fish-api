@@ -7,6 +7,7 @@ namespace FLS.ServerSide.SharingObject
     {
         public int Id { get; set; }
         public int StockReceiveDocketId { get; set; }
+        public int ReceiptTypeId { get; set; }
         public int? SupplierBranchId { get; set; }
         public string SupplierBranchName { get; set; }
         public int ProductId { get; set; }

@@ -13,6 +13,7 @@ namespace FLS.ServerSide.SharingObject
     public class ImportStockSupplierModel
     {
         public int SupplierBranchId { get; set; }
+        public string SupplierBranchName { get; set; }
         public string BillCode { get; set; }
         public string BillSerial { get; set; }
         public string BillTemplateCode { get; set; }

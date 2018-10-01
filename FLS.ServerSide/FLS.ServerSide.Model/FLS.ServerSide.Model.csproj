@@ -5,12 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="7.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FLS.ServerSide.EFCore\FLS.ServerSide.EFCore.csproj" />
-    <ProjectReference Include="..\FLS.ServerSide.Model\FLS.ServerSide.Model.csproj" />
     <ProjectReference Include="..\FLS.ServerSide.SharingObject\FLS.ServerSide.SharingObject.csproj" />
   </ItemGroup>
 

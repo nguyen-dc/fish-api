@@ -9,7 +9,7 @@ namespace FLS.ServerSide.EFCore.Entities
         public int StockDocketId { get; set; }
         public int WarehouseId { get; set; }
         public DateTime ExpendDate { get; set; }
-        public int PartnerId { get; set; }
+        public int? PartnerId { get; set; }
         public string PartnerName { get; set; }
         public decimal Vat { get; set; }
         public decimal Amount { get; set; }
