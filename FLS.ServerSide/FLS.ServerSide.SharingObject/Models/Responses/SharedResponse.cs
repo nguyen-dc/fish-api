@@ -48,17 +48,55 @@ namespace FLS.ServerSide.SharingObject
         //    Items = _items;
         //}
     }
-    public class ApiResponse<T>
+    public class ResponseConsult<T>
     {
-        public bool HasError { get; set; }
-        public int ErrorCode { get; set; }
-        public string ErrorMessage { get; set; }
-        public T Data { get; set; }
-        public ApiResponse(T _data)
+        public bool hasError { get; set; }
+        public bool hasWarning { get; set; }
+        public List<KeyValuePair<string, string>> errors { get; set; }
+        public List<KeyValuePair<string, string>> warnings { get; set; }
+        public T data { get; set; }
+        public ResponseConsult() {
+            hasError = false;
+        }
+        public ResponseConsult(T _data)
         {
-            Data = _data;
+            hasError = false;
+            hasWarning = false;
+            data = _data;
+        }
+
+        public ResponseConsult(List<KeyValuePair<string, string>> _errors, List<KeyValuePair<string, string>> _warnings = null, T _data = default(T))
+        {
+            if(_errors == null || _errors.Count == 0)
+            {
+                hasError = false;
+                data = _data;
+            }
+            else
+            {
+                hasError = true;
+                errors = _errors;
+                data = default(T);
+            }
+            if (_warnings != null && _warnings.Count > 0)
+            {
+                hasWarning = true;
+                warnings = _warnings;
+            }
         }
     }
+
+    //public class ApiResponse<T>
+    //{
+    //    public bool HasError { get; set; }
+    //    public int ErrorCode { get; set; }
+    //    public string ErrorMessage { get; set; }
+    //    public T Data { get; set; }
+    //    public ApiResponse(T _data)
+    //    {
+    //        Data = _data;
+    //    }
+    //}
     public class IdNameModel
     {
         public int id { get; set; }

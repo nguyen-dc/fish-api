@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FLS.ServerSide.Business.Interfaces;
+using FLS.ServerSide.Model.Scope;
 using FLS.ServerSide.SharingObject;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,41 +16,43 @@ namespace FLS.ServerSide.API.Controllers
     public class WarehouseController : Controller
     {
         IConfiguration config;
+        IScopeContext context;
         IWarehouseBusiness busWarehouse;
-        public WarehouseController(IConfiguration _config, IWarehouseBusiness _busWarehouse)
+        public WarehouseController(IConfiguration _config, IScopeContext _scopeContext, IWarehouseBusiness _busWarehouse)
         {
             config = _config;
+            context = _scopeContext;
             busWarehouse = _busWarehouse;
         }
         [HttpPost("")]
         public async Task<IActionResult> Search([FromBody]PageFilterModel _model)
         {
             var result = await busWarehouse.GetList(_model);
-            return Ok(new ApiResponse<PagedList<WarehouseModel>>(result));
+            return Ok(context.WrapResponse(result));
         }
         [HttpGet("{_id}")]
         public async Task<IActionResult> Get(int _id)
         {
             var result = await busWarehouse.GetDetail(_id);
-            return Ok(new ApiResponse<WarehouseModel>(result));
+            return Ok(context.WrapResponse(result));
         }
         [HttpPost("add")]
         public async Task<IActionResult> Add([FromBody]WarehouseModel _model)
         {
             var result = await busWarehouse.Add(_model);
-            return Ok(new ApiResponse<int>(result));
+            return Ok(context.WrapResponse(result));
         }
         [HttpPut("{_id}/modify")]
         public async Task<IActionResult> Modify(int _id, [FromBody]WarehouseModel _model)
         {
             var result = await busWarehouse.Modify(_id, _model);
-            return Ok(new ApiResponse<bool>(result));
+            return Ok(context.WrapResponse(result));
         }
         [HttpDelete("{_id}/remove")]
         public async Task<IActionResult> Remove(int _id)
         {
             var result = await busWarehouse.Remove(_id);
-            return Ok(new ApiResponse<bool>(result));
+            return Ok(context.WrapResponse(result));
         }
     }
 }

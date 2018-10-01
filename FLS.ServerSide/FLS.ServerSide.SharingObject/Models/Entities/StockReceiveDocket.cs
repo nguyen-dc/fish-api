@@ -20,7 +20,7 @@ namespace FLS.ServerSide.SharingObject
         public string ExecutorCode { get; set; }
         public DateTime ExecutedDate { get; set; }
         public string ActuallyReceivedCode { get; set; }
-        public DateTime ActuallyReceivedDate { get; set; }
+        public DateTime? ActuallyReceivedDate { get; set; }
         public int? StockIssueDocketId { get; set; }
     }
 }
