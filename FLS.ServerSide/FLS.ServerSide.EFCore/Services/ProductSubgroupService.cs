@@ -6,15 +6,18 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using FLS.ServerSide.SharingObject;
+using FLS.ServerSide.Model.Scope;
 
 namespace FLS.ServerSide.EFCore.Services
 {
     public class ProductSubgroupService : IProductSubgroupService
     {
         private static FLSDbContext context;
-        public ProductSubgroupService(FLSDbContext _context)
+        private static IScopeContext scopeContext;
+        public ProductSubgroupService(FLSDbContext _context, IScopeContext _scopeContext)
         {
             context = _context;
+            scopeContext = _scopeContext;
         }
         public async Task<PagedList<ProductSubgroup>> GetList(PageFilterModel _model)
         {
@@ -22,7 +25,7 @@ namespace FLS.ServerSide.EFCore.Services
             var items = await context.ProductSubgroup.Where(i => 
                         i.IsDeleted == false
                         && (_model.Key == null || i.Name.Contains(_model.Key))
-                    ).GetPagedList(_model.Page, _model.PageSize);
+                    ).OrderByDescending(i => i.UpdatedDate.HasValue ? i.UpdatedDate : i.CreatedDate).GetPagedList(_model.Page, _model.PageSize);
             return items;
         }
         public async Task<ProductSubgroup> GetDetail(int _id)
@@ -36,7 +39,7 @@ namespace FLS.ServerSide.EFCore.Services
         }
         public async Task<int> Add(ProductSubgroup _model)
         {
-            _model.CreatedUser = "admin";
+            _model.CreatedUser = scopeContext.UserCode;
             _model.CreatedDate = DateTime.Now;
             context.Add(_model);
             await context.SaveChangesAsync();
@@ -44,7 +47,7 @@ namespace FLS.ServerSide.EFCore.Services
         }
         public async Task<bool> Modify(ProductSubgroup _model)
         {
-            _model.UpdatedUser = "admin";
+            _model.UpdatedUser = scopeContext.UserCode;
             _model.UpdatedDate = DateTime.Now;
             context.Update(_model);
             await context.SaveChangesAsync();
@@ -71,7 +74,7 @@ namespace FLS.ServerSide.EFCore.Services
                         i.ProductSubgroupId == _subgroupId 
                         && i.IsDeleted == false
                         && (_model.Key == null || i.Name.Contains(_model.Key))
-                    ).GetPagedList(_model.Page, _model.PageSize);
+                    ).OrderByDescending(i => i.UpdatedDate.HasValue ? i.UpdatedDate : i.CreatedDate).GetPagedList(_model.Page, _model.PageSize);
             return items;
         }
         public async Task<List<ProductSubgroup>> GetCache()
