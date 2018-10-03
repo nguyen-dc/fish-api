@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FLS.ServerSide.Model\FLS.ServerSide.Model.csproj" />
     <ProjectReference Include="..\FLS.ServerSide.SharingObject\FLS.ServerSide.SharingObject.csproj" />
   </ItemGroup>
 
