@@ -22,9 +22,15 @@ namespace FLS.ServerSide.EFCore.Services
         public async Task<PagedList<Warehouse>> GetList(PageFilterModel _model)
         {
             _model.Key = string.IsNullOrWhiteSpace(_model.Key) ? null : _model.Key.Trim();
+            int filter = 0;
+            if (_model.Filters != null && _model.Filters.Count > 0 && _model.Filters[0].Key == FilterEnum.WarehouseType)
+            {
+                int.TryParse(_model.Filters[0].Value + "", out filter);
+            }
             var items = await context.Warehouse.Where(i => 
                         i.IsDeleted == false
                         &&(_model.Key == null || i.Name.Contains(_model.Key))
+                        && (filter == 0 || i.WarehouseTypeId == filter)
                     ).OrderByDescending(i => i.UpdatedDate.HasValue ? i.UpdatedDate : i.CreatedDate).GetPagedList(_model.Page, _model.PageSize);
             return items;
         }
