@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FLS.ServerSide.SharingObject
 {
@@ -47,6 +48,19 @@ namespace FLS.ServerSide.SharingObject
         //    TotalItem = _totalItem;
         //    Items = _items;
         //}
+    }
+
+    public class PagedQueryableList<T> : PagedListBase where T : class
+    {
+        public IQueryable<T> Query { get; set; }
+        public PagedQueryableList()
+        {
+            CurrentPage = 1;
+            PageSize = 10;
+            TotalPage = 1;
+            TotalItems = 0;
+            Query = null;
+        }
     }
     public class ResponseConsult<T>
     {
