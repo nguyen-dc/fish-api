@@ -57,7 +57,7 @@ namespace FLS.ServerSide.EFCore.Services
         }
         public async Task<bool> Remove(int _id)
         {
-            FarmingSeason item = await context.FarmingSeason.Where(i => i.Id == _id && i.IsDeleted == true).FirstOrDefaultAsync();
+            FarmingSeason item = await context.FarmingSeason.Where(i => i.Id == _id).FirstOrDefaultAsync();
             if (item == default(FarmingSeason)) return false;
             item.IsDeleted = true;
             context.Entry(item).Property(x => x.IsDeleted).IsModified = true;

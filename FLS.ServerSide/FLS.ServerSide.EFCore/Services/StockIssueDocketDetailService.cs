@@ -52,7 +52,7 @@ namespace FLS.ServerSide.EFCore.Services
         }
         public async Task<bool> Remove(int _id)
         {
-            StockIssueDocketDetail item = await context.StockIssueDocketDetail.Where(i => i.Id == _id && i.IsDeleted == true).FirstOrDefaultAsync();
+            StockIssueDocketDetail item = await context.StockIssueDocketDetail.Where(i => i.Id == _id).FirstOrDefaultAsync();
             if (item == default(StockIssueDocketDetail)) return false;
             item.IsDeleted = true;
             context.Entry(item).Property(x => x.IsDeleted).IsModified = true;

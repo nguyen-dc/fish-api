@@ -51,7 +51,7 @@ namespace FLS.ServerSide.EFCore.Services
         }
         public async Task<bool> Remove(int _id)
         {
-            StockReceiveDocketType item = await context.StockReceiveDocketType.Where(i => i.Id == _id && i.IsDeleted == true).FirstOrDefaultAsync();
+            StockReceiveDocketType item = await context.StockReceiveDocketType.Where(i => i.Id == _id).FirstOrDefaultAsync();
             if (item == default(StockReceiveDocketType)) return false;
             item.IsDeleted = true;
             context.Entry(item).Property(x => x.IsDeleted).IsModified = true;
