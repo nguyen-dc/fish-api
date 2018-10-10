@@ -20,4 +20,9 @@ namespace FLS.ServerSide.SharingObject
         public DateTime? BillDate { get; set; }
         public List<StockReceiveDocketDetailModel> ReceiveDocketDetails { get; set; }
     }
+    public class ImportStockDetailModel
+    {
+        public StockReceiveDocketModel ReceiveDocket { get; set; }
+        public List<StockReceiveDocketDetailModel> Details { get; set; }
+    }
 }

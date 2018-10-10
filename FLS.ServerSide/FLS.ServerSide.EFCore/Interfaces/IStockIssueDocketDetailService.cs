@@ -9,6 +9,7 @@ namespace FLS.ServerSide.EFCore.Services
     {
         Task<PagedList<StockIssueDocketDetail>> GetList(PageFilterModel _model);
         Task<StockIssueDocketDetail> GetDetail(int _id);
+        Task<List<StockIssueDocketDetailModel>> GetDetailsByDocketId(int _docketId);
         Task<int> Add(StockIssueDocketDetail _model);
         Task<bool> Modify(StockIssueDocketDetail _model);
         Task<bool> Remove(int _id);
