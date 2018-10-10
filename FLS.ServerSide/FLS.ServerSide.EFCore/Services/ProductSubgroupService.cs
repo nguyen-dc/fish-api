@@ -64,7 +64,6 @@ namespace FLS.ServerSide.EFCore.Services
             ProductSubgroup item = await context.ProductSubgroup
                                     .Where(i => 
                                         i.Id == _id 
-                                        && i.IsDeleted == true
                                     ).FirstOrDefaultAsync();
             if (item == default(ProductSubgroup))
                 return false;

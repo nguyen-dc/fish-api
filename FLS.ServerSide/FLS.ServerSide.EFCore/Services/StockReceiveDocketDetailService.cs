@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using FLS.ServerSide.SharingObject;
 using FLS.ServerSide.Model.Scope;
+using AutoMapper;
 
 namespace FLS.ServerSide.EFCore.Services
 {
@@ -14,10 +15,15 @@ namespace FLS.ServerSide.EFCore.Services
     {
         private static FLSDbContext context;
         private static IScopeContext scopeContext;
-        public StockReceiveDocketDetailService(FLSDbContext _context, IScopeContext _scopeContext)
+        private readonly IMapper iMapper;
+        public StockReceiveDocketDetailService(
+            FLSDbContext _context, 
+            IScopeContext _scopeContext,
+            IMapper _iMapper)
         {
             context = _context;
             scopeContext = _scopeContext;
+            iMapper = _iMapper;
         }
         public async Task<PagedList<StockReceiveDocketDetail>> GetList(PageFilterModel _model)
         {
@@ -33,6 +39,15 @@ namespace FLS.ServerSide.EFCore.Services
         {
             var item = await context.StockReceiveDocketDetail.FirstOrDefaultAsync(x => x.Id == _id && x.IsDeleted == false);
             return item;
+        }
+        public async Task<List<StockReceiveDocketDetailModel>> GetDetailsByDocketId(int _docketId)
+        {
+            var item = await context.StockReceiveDocketDetail.Where(x =>
+                        x.StockReceiveDocketId == _docketId
+                        && x.IsDeleted == false)
+                        .ToListAsync();
+            List<StockReceiveDocketDetailModel> details = iMapper.Map<List<StockReceiveDocketDetailModel>>(item);
+            return details;
         }
         public async Task<int> Add(StockReceiveDocketDetail _model)
         {

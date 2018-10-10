@@ -2,6 +2,7 @@
 using FLS.ServerSide.Business.Interfaces;
 using FLS.ServerSide.EFCore.Entities;
 using FLS.ServerSide.EFCore.Services;
+using FLS.ServerSide.Model.Scope;
 using FLS.ServerSide.SharingObject;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace FLS.ServerSide.Business.Biz
     public class StockIssueDocketBusiness : IStockIssueDocketBusiness
     {
         private static FLSDbContext context;
+        private static IScopeContext scopeContext;
         private readonly IStockIssueDocketService svcStockIssueDocket;
         private readonly IStockIssueDocketDetailService svcStockIssueDocketDetail;
         private readonly IExpenditureDocketService svcExpenditureDocket;
@@ -19,6 +21,7 @@ namespace FLS.ServerSide.Business.Biz
         private readonly IMapper iMapper;
         public StockIssueDocketBusiness(
             FLSDbContext _context,
+            IScopeContext _scopeContext,
             IStockIssueDocketService _svcStockIssueDocket,
             IStockIssueDocketDetailService _svcStockIssueDocketDetail,
             IExpenditureDocketService _svcExpenditureDocket,
@@ -26,6 +29,7 @@ namespace FLS.ServerSide.Business.Biz
             IMapper _iMapper)
         {
             context = _context;
+            scopeContext = _scopeContext;
             svcStockIssueDocket = _svcStockIssueDocket;
             svcStockIssueDocketDetail = _svcStockIssueDocketDetail;
             svcExpenditureDocket = _svcExpenditureDocket;
@@ -36,9 +40,19 @@ namespace FLS.ServerSide.Business.Biz
         {
             return iMapper.Map<PagedList<StockIssueDocketModel>>(await svcStockIssueDocket.GetList(_model));
         }
-        public async Task<StockIssueDocketModel> GetDetail(int _id)
+        public async Task<ExportStockDetailModel> GetDetail(int _id)
         {
-            return iMapper.Map<StockIssueDocketModel>(await svcStockIssueDocket.GetDetail(_id));
+            ExportStockDetailModel result = new ExportStockDetailModel();
+            StockIssueDocketModel issueDocket = iMapper.Map<StockIssueDocketModel>(await svcStockIssueDocket.GetDetail(_id));
+            if (issueDocket == null)
+            {
+                scopeContext.AddError("Mã phiếu xuất không tồn tại");
+                return null;
+            }
+            result.IssueDocket = issueDocket;
+            List<StockIssueDocketDetailModel> details = iMapper.Map<List<StockIssueDocketDetailModel>>(await svcStockIssueDocketDetail.GetDetailsByDocketId(_id));
+            result.Details = details;
+            return result;
         }
         public async Task<int> Add(ExportStockModel _model)
         {

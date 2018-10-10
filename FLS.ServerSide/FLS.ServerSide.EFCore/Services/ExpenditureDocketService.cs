@@ -33,6 +33,14 @@ namespace FLS.ServerSide.EFCore.Services
             var item = await context.ExpenditureDocket.FirstOrDefaultAsync(x => x.Id == _id && x.IsDeleted == false);
             return item;
         }
+        public async Task<List<ExpenditureDocket>> GetByStockDocketId(int stockDocketId)
+        {
+            var items = await context.ExpenditureDocket.Where(i => 
+                        i.StockDocketId == stockDocketId
+                        && i.IsDeleted == false
+                    ).ToListAsync();
+            return items;
+        }
         public async Task<int> Add(ExpenditureDocket _model)
         {
             _model.CreatedUser = scopeContext.UserCode;

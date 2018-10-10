@@ -8,8 +8,10 @@ namespace FLS.ServerSide.SharingObject
         public int Id { get; set; }
         public int StockIssueDocketId { get; set; }
         public int ProductId { get; set; }
+        public string ProductName { get; set; }
         public decimal Quantity { get; set; }
         public int ProductUnitId { get; set; }
+        public string ProductUnitName { get; set; }
         public decimal UnitPrice { get; set; }
         public int VatPercent { get; set; }
         public decimal Vat { get; set; }

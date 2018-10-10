@@ -2,6 +2,7 @@
 using FLS.ServerSide.Business.Interfaces;
 using FLS.ServerSide.EFCore.Entities;
 using FLS.ServerSide.EFCore.Services;
+using FLS.ServerSide.Model.Scope;
 using FLS.ServerSide.SharingObject;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace FLS.ServerSide.Business.Biz
     public class StockReceiveDocketBusiness : IStockReceiveDocketBusiness
     {
         private static FLSDbContext context;
+        private static IScopeContext scopeContext;
         private readonly IStockReceiveDocketService svcStockReceiveDocket;
         private readonly IStockReceiveDocketDetailService svcStockReceiveDocketDetail;
         private readonly IExpenditureDocketService svcExpenditureDocket;
@@ -19,6 +21,7 @@ namespace FLS.ServerSide.Business.Biz
         private readonly IMapper iMapper;
         public StockReceiveDocketBusiness(
             FLSDbContext _context,
+            IScopeContext _scopeContext,
             IStockReceiveDocketService _svcStockReceiveDocket,
             IStockReceiveDocketDetailService _svcStockReceiveDocketDetail,
             IExpenditureDocketService _svcExpenditureDocket,
@@ -26,6 +29,7 @@ namespace FLS.ServerSide.Business.Biz
             IMapper _iMapper)
         {
             context = _context;
+            scopeContext = _scopeContext;
             svcStockReceiveDocket = _svcStockReceiveDocket;
             svcStockReceiveDocketDetail = _svcStockReceiveDocketDetail;
             svcExpenditureDocket = _svcExpenditureDocket;
@@ -36,15 +40,37 @@ namespace FLS.ServerSide.Business.Biz
         {
             return iMapper.Map<PagedList<StockReceiveDocketModel>>(await svcStockReceiveDocket.GetList(_model));
         }
-        public async Task<ImportStockModel> GetDetail(int _id)
+        public async Task<ImportStockDetailModel> GetDetail(int _id)
         {
-            ImportStockModel result = new ImportStockModel();
+            ImportStockDetailModel result = new ImportStockDetailModel();
             StockReceiveDocketModel receiveDocket = iMapper.Map<StockReceiveDocketModel>(await svcStockReceiveDocket.GetDetail(_id));
+            if(receiveDocket == null)
+            {
+                scopeContext.AddError("Mã phiếu nhập không tồn tại");
+                return null;
+            }
             result.ReceiveDocket = receiveDocket;
+            List<StockReceiveDocketDetailModel> details = iMapper.Map<List<StockReceiveDocketDetailModel>>(await svcStockReceiveDocketDetail.GetDetailsByDocketId(_id));
+            result.Details = details;
             return result;
         }
         public async Task<int> Add(ImportStockModel _model)
         {
+            if(_model == null || _model.ReceiveDocket == null || _model.Suppliers == null)
+            {
+                scopeContext.AddError("Lỗi dữ liệu đầu vào");
+                return 0;
+            }
+            if(_model.ReceiveDocket.StockReceiveDocketTypeId <= 0)
+            {
+                scopeContext.AddError("Chưa chọn loại phiếu nhập");
+                return 0;
+            }
+            if (_model.ReceiveDocket.WarehouseId <= 0)
+            {
+                scopeContext.AddError("Chưa chọn kho nhập");
+                return 0;
+            }
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
@@ -83,6 +109,8 @@ namespace FLS.ServerSide.Business.Biz
                         {
                             StockReceiveDocketDetail docketDetail = iMapper.Map<StockReceiveDocketDetail>(i);
                             docketDetail.StockReceiveDocketId = docket.Id;
+                            docketDetail.SupplierBranchId = item.SupplierBranchId;
+                            docketDetail.SupplierBranchName = item.SupplierBranchName;
                             docketDetail.Amount = i.Quantity * i.UnitPrice;
                             docketDetail.Vat = i.Amount * (i.VatPercent / 100);
                             docketDetail.TotalAmount = i.Amount + i.Vat;
