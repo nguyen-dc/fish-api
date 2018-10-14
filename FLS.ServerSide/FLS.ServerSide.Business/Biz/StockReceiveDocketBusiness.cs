@@ -112,8 +112,8 @@ namespace FLS.ServerSide.Business.Biz
                             docketDetail.SupplierBranchId = item.SupplierBranchId;
                             docketDetail.SupplierBranchName = item.SupplierBranchName;
                             docketDetail.Amount = i.Quantity * i.UnitPrice;
-                            docketDetail.Vat = i.Amount * (i.VatPercent / 100);
-                            docketDetail.TotalAmount = i.Amount + i.Vat;
+                            docketDetail.Vat = docketDetail.Amount * (i.VatPercent / (decimal)100);
+                            docketDetail.TotalAmount = docketDetail.Amount + docketDetail.Vat;
                             docketDetail.Id = await svcStockReceiveDocketDetail.Add(docketDetail);
 
                             ExpenditureDocketDetail eD = new ExpenditureDocketDetail();
