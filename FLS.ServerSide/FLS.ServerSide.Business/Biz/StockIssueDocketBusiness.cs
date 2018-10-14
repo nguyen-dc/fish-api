@@ -75,7 +75,7 @@ namespace FLS.ServerSide.Business.Biz
                 foreach (var item in docketDetails)
                 {
                     item.Amount = item.Quantity * item.UnitPrice;
-                    item.Vat = item.Amount * (item.VatPercent / 100);
+                    item.Vat = item.Amount * (item.VatPercent / (decimal)100);
                     item.TotalAmount = item.Amount + item.Vat;
 
                     ExpenditureDocketDetail exDetail = new ExpenditureDocketDetail
