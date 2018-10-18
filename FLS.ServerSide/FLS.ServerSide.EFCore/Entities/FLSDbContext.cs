@@ -1092,8 +1092,8 @@ namespace FLS.ServerSide.EFCore.Entities
                     .HasColumnName("product_subgroup_id")
                     .HasColumnType("int(11)");
 
-                entity.Property(e => e.TaxPercentId)
-                    .HasColumnName("tax_percent_id")
+                entity.Property(e => e.TaxPercent)
+                    .HasColumnName("tax_percent")
                     .HasColumnType("int(11)")
                     .HasDefaultValueSql("'0'");
 

@@ -116,6 +116,7 @@ namespace FLS.ServerSide.SharingObject
         public int id { get; set; }
         public string name { get; set; }
         public string description { get; set; }
+        public string value { get; set; }
         public bool? check { get; set; }
         public int? parentId { get; set; }
         public int? belongId { get; set; }
