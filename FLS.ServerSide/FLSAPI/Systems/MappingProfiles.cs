@@ -84,6 +84,7 @@ namespace FLS.ServerSide.API.Systems
             CreateMap<TaxPercent, IdNameModel>(MemberList.Destination)
                 .ForMember(d => d.id, m => m.MapFrom(s => s.Id))
                 .ForMember(d => d.name, m => m.MapFrom(s => s.Name))
+                .ForMember(d => d.value, m => m.MapFrom(s => s.Value))
                 .ForMember(d => d.description, m => m.MapFrom(s => s.Name));
             CreateMap<Warehouse, IdNameModel>(MemberList.Destination)
                 .ForMember(d => d.id, m => m.MapFrom(s => s.Id))

@@ -10,7 +10,7 @@ namespace FLS.ServerSide.EFCore.Entities
         public int ProductGroupId { get; set; }
         public int ProductSubgroupId { get; set; }
         public int DefaultUnitId { get; set; }
-        public int TaxPercentId { get; set; }
+        public int TaxPercent { get; set; }
         public string Description { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string CreatedUser { get; set; }
