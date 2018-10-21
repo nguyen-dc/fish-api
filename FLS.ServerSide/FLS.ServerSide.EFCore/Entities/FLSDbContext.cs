@@ -1,4 +1,5 @@
 ﻿using System;
+using FLS.ServerSide.SharingObject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -47,7 +48,11 @@ namespace FLS.ServerSide.EFCore.Entities
         //        optionsBuilder.UseMySql("server=128.199.142.56;user id=hr_user_db3;password=hr_user_db3;port=5306;database=hr_db3;persistsecurityinfo=True;ConvertZeroDatetime=True;");
         //    }
         //}
-
+        private void CreateStoredBuilder(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Query<StockReceiveDocketDetailModel>();
+            modelBuilder.Query<StockIssueDocketDetailModel>();
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CapitalCost>(entity =>
@@ -2143,6 +2148,8 @@ namespace FLS.ServerSide.EFCore.Entities
                     .HasColumnName("updated_user")
                     .HasColumnType("varchar(50)");
             });
+
+            CreateStoredBuilder(modelBuilder);
         }
     }
 }

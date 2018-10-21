@@ -2,16 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using FLS.ServerSide.SharingObject;
 using FLS.ServerSide.Model.Scope;
 using AutoMapper;
+using MySql.Data.MySqlClient;
 
 namespace FLS.ServerSide.EFCore.Services
 {
-    public class StockReceiveDocketDetailService : IStockReceiveDocketDetailService
+    public class StockReceiveDocketDetailService : EFCoreServiceBase, IStockReceiveDocketDetailService
     {
         private static FLSDbContext context;
         private static IScopeContext scopeContext;
@@ -19,7 +19,7 @@ namespace FLS.ServerSide.EFCore.Services
         public StockReceiveDocketDetailService(
             FLSDbContext _context, 
             IScopeContext _scopeContext,
-            IMapper _iMapper)
+            IMapper _iMapper) : base(_context, _scopeContext)
         {
             context = _context;
             scopeContext = _scopeContext;
@@ -42,11 +42,10 @@ namespace FLS.ServerSide.EFCore.Services
         }
         public async Task<List<StockReceiveDocketDetailModel>> GetDetailsByDocketId(int _docketId)
         {
-            var item = await context.StockReceiveDocketDetail.Where(x =>
-                        x.StockReceiveDocketId == _docketId
-                        && x.IsDeleted == false)
-                        .ToListAsync();
-            List<StockReceiveDocketDetailModel> details = iMapper.Map<List<StockReceiveDocketDetailModel>>(item);
+            var __params = new {
+                docketId = _docketId
+            };
+            var details = await CallStored<StockReceiveDocketDetailModel>("SP_Import_Get_Details", __params).ToListAsync();
             return details;
         }
         public async Task<int> Add(StockReceiveDocketDetail _model)

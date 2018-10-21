@@ -56,6 +56,21 @@ namespace FLS.ServerSide.Business.Biz
         }
         public async Task<int> Add(ExportStockModel _model)
         {
+            if (_model == null || _model.IssueDocket == null || _model.DocketDetails == null)
+            {
+                scopeContext.AddError("Lỗi dữ liệu đầu vào");
+                return 0;
+            }
+            if (_model.IssueDocket.StockIssueDocketTypeId <= 0)
+            {
+                scopeContext.AddError("Chưa chọn loại phiếu nhập");
+                return 0;
+            }
+            if (_model.IssueDocket.WarehouseId <= 0)
+            {
+                scopeContext.AddError("Chưa chọn kho nhập");
+                return 0;
+            }
             using (var transaction = context.Database.BeginTransaction())
             {
                 StockIssueDocket issueDocket = iMapper.Map<StockIssueDocket>(_model.IssueDocket);
