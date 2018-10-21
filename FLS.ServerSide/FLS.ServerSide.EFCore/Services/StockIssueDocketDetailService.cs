@@ -11,7 +11,7 @@ using AutoMapper;
 
 namespace FLS.ServerSide.EFCore.Services
 {
-    public class StockIssueDocketDetailService : IStockIssueDocketDetailService
+    public class StockIssueDocketDetailService : EFCoreServiceBase, IStockIssueDocketDetailService
     {
         private static FLSDbContext context;
         private static IScopeContext scopeContext;
@@ -19,7 +19,7 @@ namespace FLS.ServerSide.EFCore.Services
         public StockIssueDocketDetailService(
             FLSDbContext _context, 
             IScopeContext _scopeContext,
-            IMapper _iMapper)
+            IMapper _iMapper) : base(_context, _scopeContext)
         {
             context = _context;
             scopeContext = _scopeContext;
@@ -42,11 +42,11 @@ namespace FLS.ServerSide.EFCore.Services
         }
         public async Task<List<StockIssueDocketDetailModel>> GetDetailsByDocketId(int _docketId)
         {
-            var item = await context.StockIssueDocketDetail.Where(x =>
-                        x.StockIssueDocketId == _docketId
-                        && x.IsDeleted == false)
-                        .ToListAsync();
-            List<StockIssueDocketDetailModel> details = iMapper.Map<List<StockIssueDocketDetailModel>>(item);
+            var __params = new
+            {
+                docketId = _docketId
+            };
+            var details = await CallStored<StockIssueDocketDetailModel>("SP_Export_Get_Details", __params).ToListAsync();
             return details;
         }
         public async Task<int> Add(StockIssueDocketDetail _model)

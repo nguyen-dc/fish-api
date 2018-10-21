@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FLS.ServerSide.SharingObject
 {
@@ -7,7 +6,6 @@ namespace FLS.ServerSide.SharingObject
     {
         public int Id { get; set; }
         public int StockReceiveDocketId { get; set; }
-        public int ReceiptTypeId { get; set; }
         public int? SupplierBranchId { get; set; }
         public string SupplierBranchName { get; set; }
         public int ProductId { get; set; }
@@ -20,5 +18,7 @@ namespace FLS.ServerSide.SharingObject
         public decimal Vat { get; set; }
         public decimal Amount { get; set; }
         public decimal TotalAmount { get; set; }
+        [NotMapped]
+        public int ReceiptTypeId { get; set; }
     }
 }
