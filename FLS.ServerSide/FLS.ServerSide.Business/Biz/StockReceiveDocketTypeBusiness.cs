@@ -5,6 +5,7 @@ using FLS.ServerSide.EFCore.Services;
 using FLS.ServerSide.SharingObject;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FLS.ServerSide.Business.Biz
@@ -44,7 +45,10 @@ namespace FLS.ServerSide.Business.Biz
         }
         public async Task<List<IdNameModel>> GetCache()
         {
-            return iMapper.Map<List<IdNameModel>>(await svcStockReceiveDocketType.GetCache());
+            var list = await svcStockReceiveDocketType.GetCache();
+            list.RemoveAll(l => l.IsSystem == true && l.Id != (int)SystemIDEnum.ImportStockTypeDefault);
+            var result = iMapper.Map<List<IdNameModel>>(list);
+            return result;
         }
     }
 }

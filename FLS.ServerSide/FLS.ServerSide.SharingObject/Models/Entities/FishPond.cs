@@ -16,5 +16,7 @@ namespace FLS.ServerSide.SharingObject
         public decimal? D { get; set; }
         public decimal Depth { get; set; }
         public int? WarehouseId { get; set; }
+        public int? DefaultWarehouseId { get; set; }
+        public string DefaultWarehouseName { get; set; }
     }
 }

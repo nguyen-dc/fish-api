@@ -44,7 +44,10 @@ namespace FLS.ServerSide.Business.Biz
         }
         public async Task<List<IdNameModel>> GetCache()
         {
-            return iMapper.Map<List<IdNameModel>>(await svcStockIssueDocketType.GetCache());
+            var list = await svcStockIssueDocketType.GetCache();
+            list.RemoveAll(l => l.IsSystem == true && l.Id != (int)SystemIDEnum.ExportStockTypeDefault);
+            var result = iMapper.Map<List<IdNameModel>>(list);
+            return result;
         }
     }
 }
