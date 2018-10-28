@@ -24,6 +24,7 @@ namespace FLS.ServerSide.EFCore.Services
             _model.Key = string.IsNullOrWhiteSpace(_model.Key) ? null : _model.Key.Trim();
             var items = await context.WarehouseType.Where(i => 
                         i.IsDeleted == false
+                        && i.Id > 0
                         &&(_model.Key == null || i.Name.Contains(_model.Key))
                     ).OrderByDescending(i => i.UpdatedDate.HasValue ? i.UpdatedDate : i.CreatedDate).GetPagedList(_model.Page, _model.PageSize);
             return items;
@@ -60,7 +61,7 @@ namespace FLS.ServerSide.EFCore.Services
         }
         public async Task<List<WarehouseType>> GetCache()
         {
-            var items = await context.WarehouseType.Where(i => i.IsDeleted == false).ToListAsync();
+            var items = await context.WarehouseType.Where(i => i.IsDeleted == false && i.Id > 0).ToListAsync();
             return items;
         }
     }

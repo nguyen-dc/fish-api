@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using FLS.ServerSide.SharingObject;
 using FLS.ServerSide.Model.Scope;
+using AutoMapper;
 
 namespace FLS.ServerSide.EFCore.Services
 {
@@ -14,12 +15,17 @@ namespace FLS.ServerSide.EFCore.Services
     {
         private static FLSDbContext context;
         private static IScopeContext scopeContext;
-        public FishPondService(FLSDbContext _context, IScopeContext _scopeContext)
+        private readonly IMapper iMapper;
+        public FishPondService(
+            FLSDbContext _context, 
+            IScopeContext _scopeContext,
+            IMapper _iMapper)
         {
             context = _context;
             scopeContext = _scopeContext;
+            iMapper = _iMapper;
         }
-        public async Task<PagedList<FishPond>> GetList(PageFilterModel _model)
+        public async Task<PagedList<FishPondModel>> GetList(PageFilterModel _model)
         {
             _model.Key = string.IsNullOrWhiteSpace(_model.Key) ? null : _model.Key.Trim();
             int filter = 0;
@@ -27,12 +33,36 @@ namespace FLS.ServerSide.EFCore.Services
             {
                 int.TryParse(_model.Filters[0].Value + "", out filter);
             }
+            // lấy ds
             var items = await context.FishPond.Where(i => 
                         i.IsDeleted == false
                         && (_model.Key == null || i.Name.Contains(_model.Key))
                         && (filter == 0 || i.FarmRegionId == filter)
                     ).OrderByDescending(i => i.UpdatedDate.HasValue ? i.UpdatedDate : i.CreatedDate).GetPagedList(_model.Page, _model.PageSize);
-            return items;
+            PagedList<FishPondModel> result = iMapper.Map<PagedList<FishPondModel>>(items);
+            // lấy ds kho tương ứng
+            var idList = items.Items.Select(i => i.WarehouseId);
+            var defaultWarehouses = await context.Warehouse
+                .Where(x => idList.Contains(x.Id))
+                .Join(context.Warehouse,
+                    wh => wh.DefaultWarehouseId,
+                    dwh => dwh.Id,
+                    (wh, dwh) => new
+                    {
+                        warehouseId = wh.Id,
+                        defaultWarehouseId = dwh.Id,
+                        defaultWarehouseName = dwh.Name
+                    })
+                    .ToListAsync();
+            result.Items.ForEach(i => {
+                var dWh = defaultWarehouses.FirstOrDefault(d => i.WarehouseId == d.warehouseId);
+                if(dWh != null)
+                {
+                    i.DefaultWarehouseId = dWh.defaultWarehouseId;
+                    i.DefaultWarehouseName = dWh.defaultWarehouseName;
+                }
+            });
+            return result;
         }
         public async Task<FishPond> GetDetail(int _id)
         {
