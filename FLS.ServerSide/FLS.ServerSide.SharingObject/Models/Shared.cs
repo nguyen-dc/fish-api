@@ -31,6 +31,7 @@ namespace FLS.ServerSide.SharingObject
         public const string FISH_POND_REMOVE = "api/fish-ponds/{id}/remove";
         // PRODUCT
         public const string PRODUCT_SEARCH = "api/products";
+        public const string PRODUCT_SEARCH_LIVESTOCK = "api/products/livestocks";
         public const string PRODUCT_DETAIL = "api/products/{id}";
         public const string PRODUCT_ADD = "api/products/add";
         public const string PRODUCT_MODIFY = "api/products/{id}/modify";
@@ -125,6 +126,12 @@ namespace FLS.ServerSide.SharingObject
         public const string CACHE_TAX_PERCENT = "api/cache/tax-percents";
         public const string CACHE_WAREHOUSE = "api/cache/warehouses";
         public const string CACHE_WAREHOUSE_TYPE = "api/cache/warehouse-types";
+
+        // LIVESTOCK PROCEED
+        /// <summary>
+        /// PUT
+        /// </summary>
+        public const string LIVESTOCK_PROCEED_RELEASE = "api/livestock-proceeds/release";
     }
     static public class REQUEST_HEADER
     {

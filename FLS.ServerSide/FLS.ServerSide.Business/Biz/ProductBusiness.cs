@@ -18,9 +18,13 @@ namespace FLS.ServerSide.Business.Biz
             svcProduct = _svcProduct;
             iMapper = _iMapper;
         }
-        public async Task<PagedList<ProductModel>> GetList(PageFilterModel _model)
+        public async Task<PagedList<ProductModel>> GetStockList(PageFilterModel _model)
         {
-            return iMapper.Map<PagedList<ProductModel>>(await svcProduct.GetList(_model));
+            return iMapper.Map<PagedList<ProductModel>>(await svcProduct.GetStockList(_model));
+        }
+        public async Task<PagedList<ProductModel>> GetLivestockList(PageFilterModel _model)
+        {
+            return iMapper.Map<PagedList<ProductModel>>(await svcProduct.GetLivestockList(_model));
         }
         public async Task<ProductModel> GetDetail(int _id)
         {

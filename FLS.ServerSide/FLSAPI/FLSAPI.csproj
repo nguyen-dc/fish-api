@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <RootNamespace>FLS.ServerSide.Model</RootNamespace>
+    <RootNamespace>FLS.ServerSide.API</RootNamespace>
     <AssemblyName>FLS.ServerSide.API</AssemblyName>
     <MvcRazorExcludeRefAssembliesFromPublish>false</MvcRazorExcludeRefAssembliesFromPublish>
   </PropertyGroup>
