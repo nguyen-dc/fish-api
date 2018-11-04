@@ -7,7 +7,8 @@ namespace FLS.ServerSide.EFCore.Services
 {
     public interface IProductService
     {
-        Task<PagedList<Product>> GetList(PageFilterModel _model);
+        Task<PagedList<Product>> GetStockList(PageFilterModel _model);
+        Task<PagedList<Product>> GetLivestockList(PageFilterModel _model);
         Task<Product> GetDetail(int _id);
         Task<int> Add(Product _model);
         Task<bool> Modify(Product _model);

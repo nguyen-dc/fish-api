@@ -27,7 +27,13 @@ namespace FLS.ServerSide.API.Controllers
         [HttpPost("")]
         public async Task<IActionResult> Search([FromBody]PageFilterModel _model)
         {
-            var result = await busProduct.GetList(_model);
+            var result = await busProduct.GetStockList(_model);
+            return Ok(context.WrapResponse(result));
+        }
+        [HttpPost("livestocks")]
+        public async Task<IActionResult> SearchLivestocks([FromBody]PageFilterModel _model)
+        {
+            var result = await busProduct.GetLivestockList(_model);
             return Ok(context.WrapResponse(result));
         }
         [HttpGet("{_id}")]

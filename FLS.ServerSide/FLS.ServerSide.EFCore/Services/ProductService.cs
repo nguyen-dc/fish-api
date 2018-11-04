@@ -19,7 +19,7 @@ namespace FLS.ServerSide.EFCore.Services
             context = _context;
             scopeContext = _scopeContext;
         }
-        public async Task<PagedList<Product>> GetList(PageFilterModel _model)
+        public async Task<PagedList<Product>> GetStockList(PageFilterModel _model)
         {
             _model.Key = string.IsNullOrWhiteSpace(_model.Key) ? null : _model.Key.Trim();
             int filter = 0;
@@ -27,11 +27,26 @@ namespace FLS.ServerSide.EFCore.Services
             {
                 int.TryParse(_model.Filters[0].Value + "", out filter);
             }
-            var items = await context.Product.Where(i => 
+            var GIONG_NUOI = (int)SystemIDEnum.ProductGroup_GiongNuoi; // ngành hàng giống nuôi
+            if (filter == GIONG_NUOI) return null;
+           var items = await context.Product.Where(i => 
                         i.IsDeleted == false
                         && (_model.Key == null || i.Name.Contains(_model.Key))
+                        && i.ProductGroupId != GIONG_NUOI
                         && (filter == 0 || i.ProductGroupId == filter)
                     ).OrderByDescending(i => i.UpdatedDate.HasValue ? i.UpdatedDate : i.CreatedDate).GetPagedList(_model.Page, _model.PageSize);
+            return items;
+        }
+
+        public async Task<PagedList<Product>> GetLivestockList(PageFilterModel _model)
+        {
+            _model.Key = string.IsNullOrWhiteSpace(_model.Key) ? null : _model.Key.Trim();
+            var GIONG_NUOI = (int)SystemIDEnum.ProductGroup_GiongNuoi; // ngành hàng giống nuôi
+            var items = await context.Product.Where(i =>
+                         i.IsDeleted == false
+                         && (_model.Key == null || i.Name.Contains(_model.Key))
+                         && i.ProductGroupId == GIONG_NUOI
+                     ).OrderByDescending(i => i.UpdatedDate.HasValue ? i.UpdatedDate : i.CreatedDate).GetPagedList(_model.Page, _model.PageSize);
             return items;
         }
         public async Task<Product> GetDetail(int _id)

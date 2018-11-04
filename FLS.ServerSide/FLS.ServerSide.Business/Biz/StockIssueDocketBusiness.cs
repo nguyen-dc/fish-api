@@ -2,6 +2,7 @@
 using FLS.ServerSide.Business.Interfaces;
 using FLS.ServerSide.EFCore.Entities;
 using FLS.ServerSide.EFCore.Services;
+using FLS.ServerSide.Model;
 using FLS.ServerSide.Model.Scope;
 using FLS.ServerSide.SharingObject;
 using System;
@@ -18,6 +19,7 @@ namespace FLS.ServerSide.Business.Biz
         private readonly IStockIssueDocketDetailService svcStockIssueDocketDetail;
         private readonly IExpenditureDocketService svcExpenditureDocket;
         private readonly IExpenditureDocketDetailService svcExpenditureDocketDetail;
+        private readonly ICurrentInStockService svcCurrentInStock;
         private readonly IMapper iMapper;
         public StockIssueDocketBusiness(
             FLSDbContext _context,
@@ -26,6 +28,7 @@ namespace FLS.ServerSide.Business.Biz
             IStockIssueDocketDetailService _svcStockIssueDocketDetail,
             IExpenditureDocketService _svcExpenditureDocket,
             IExpenditureDocketDetailService _svcExpenditureDocketDetail,
+            ICurrentInStockService _svcCurrentInStock,
             IMapper _iMapper)
         {
             context = _context;
@@ -34,6 +37,7 @@ namespace FLS.ServerSide.Business.Biz
             svcStockIssueDocketDetail = _svcStockIssueDocketDetail;
             svcExpenditureDocket = _svcExpenditureDocket;
             svcExpenditureDocketDetail = _svcExpenditureDocketDetail;
+            svcCurrentInStock = _svcCurrentInStock;
             iMapper = _iMapper;
         }
         public async Task<PagedList<StockIssueDocketModel>> GetList(PageFilterModel _model)
@@ -87,6 +91,8 @@ namespace FLS.ServerSide.Business.Biz
                 decimal orderVAT = 0;
                 decimal orderAmount = 0;
                 decimal orderTotalAmount = 0;
+
+                List<ProductInstockModel> productInstock = new List<ProductInstockModel>();
                 foreach (var item in docketDetails)
                 {
                     item.Amount = item.Quantity * item.UnitPrice;
@@ -105,6 +111,22 @@ namespace FLS.ServerSide.Business.Biz
                     orderVAT += item.Vat;
                     orderAmount += item.Amount;
                     orderTotalAmount += item.TotalAmount;
+
+                    #region Trừ vào danh sách tồn - Tạm thời chưa chuyển đổi sang số lượng theo đơn vị tính chuẩn
+                    var idx = productInstock.FindIndex(p => p.ProductId == item.ProductId);
+                    if (idx >= 0)
+                        productInstock[idx].Quantity += item.Quantity;
+                    else
+                    {
+                        productInstock.Add(new ProductInstockModel()
+                        {
+                            ProductId = item.ProductId,
+                            ProductName = "",
+                            Quantity = item.Quantity,
+                            ProductUnitId = item.ProductUnitId
+                        });
+                    }
+                    #endregion
                 }
                 issueDocket.Vat = orderVAT;
                 issueDocket.Amount = orderAmount;
@@ -127,6 +149,32 @@ namespace FLS.ServerSide.Business.Biz
                     item.ExpenditureDocketId = receipt.Id;
                     item.Id = await svcExpenditureDocketDetail.Add(item);
                 }
+
+                #region Cập nhật vào bảng tồn
+                foreach (var current in productInstock)
+                {
+                    var instock = await svcCurrentInStock.GetList(issueDocket.WarehouseId, current.ProductId);
+                    if (instock == null || instock.Count == 0)
+                    {
+                        CurrentInStock cis = new CurrentInStock()
+                        {
+                            Amount = 0 - current.Quantity,
+                            AmountExpect = 0 - current.Quantity,
+                            ProductId = current.ProductId,
+                            ProductUnitId = current.ProductUnitId,
+                            WarehouseId = issueDocket.WarehouseId
+                        };
+                        cis.Id = await svcCurrentInStock.Add(cis);
+                    }
+                    else
+                    {
+                        CurrentInStock cis = instock[0];
+                        cis.Amount -= current.Quantity;
+                        cis.AmountExpect -= current.Quantity;
+                        await svcCurrentInStock.Modify(cis);
+                    }
+                }
+                #endregion
                 transaction.Commit();
                 return issueDocket.Id;
             }

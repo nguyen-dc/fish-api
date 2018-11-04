@@ -32,6 +32,7 @@ namespace FLS.ServerSide.API.Systems
             services.AddScoped<IWarehouseBusiness, WarehouseBusiness>();
             services.AddScoped<IWarehouseTypeBusiness, WarehouseTypeBusiness>();
             // -- Services
+            services.AddScoped<ICurrentInStockService, CurrentInStockService>();
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IExpenditureDocketService, ExpenditureDocketService>();
             services.AddScoped<IExpenditureDocketDetailService, ExpenditureDocketDetailService>();
