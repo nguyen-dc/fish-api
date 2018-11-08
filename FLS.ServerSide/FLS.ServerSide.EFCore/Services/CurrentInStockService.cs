@@ -28,7 +28,7 @@ namespace FLS.ServerSide.EFCore.Services
             }
             var items = await context.CurrentInStock.Where(i => 
                         i.WarehouseId == warehouseId
-                        && productId == 0 || i.ProductId == productId
+                        && (productId == 0 || i.ProductId == productId)
                     ).ToListAsync();
             return items;
         }
