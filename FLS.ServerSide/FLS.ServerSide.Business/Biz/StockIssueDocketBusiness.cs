@@ -127,6 +127,7 @@ namespace FLS.ServerSide.Business.Biz
                     }
                     else
                     {
+                        item.UnitPrice = 0;
                         item.Amount = 0;
                         item.Vat = 0;
                         item.TotalAmount = 0;
