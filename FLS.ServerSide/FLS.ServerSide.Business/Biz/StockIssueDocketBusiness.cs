@@ -83,6 +83,7 @@ namespace FLS.ServerSide.Business.Biz
             var receiptType = 0;
             if (issueDocketType != null && issueDocketType.ReceiptNeeded)
                 receiptType = issueDocketType.ReceiptTypeId;
+                
             // bắt đầu tạo phiếu
             using (var transaction = context.Database.BeginTransaction())
             {
