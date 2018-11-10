@@ -140,6 +140,7 @@ namespace FLS.ServerSide.Business.Biz
                             }
                             else
                             {
+                                docketDetail.UnitPrice = 0;
                                 docketDetail.Amount = 0;
                                 docketDetail.Vat = 0;
                                 docketDetail.TotalAmount = 0;
@@ -217,18 +218,11 @@ namespace FLS.ServerSide.Business.Biz
                         orderTotalAmount += expendDocket.TotalAmount;
                     }
                     // cập nhật phiếu nhập
-                    if (paySlipType > 0)
-                    {
-                        docket.Vat = orderVAT;
-                        docket.Amount = orderAmount;
-                        docket.TotalAmount = orderTotalAmount;
-                        await svcStockReceiveDocket.Modify(docket);
-                    } else
-                    {
-                        docket.Vat = 0;
-                        docket.Amount = 0;
-                        docket.TotalAmount = 0;
-                    }
+                    docket.Vat = orderVAT;
+                    docket.Amount = orderAmount;
+                    docket.TotalAmount = orderTotalAmount;
+                    await svcStockReceiveDocket.Modify(docket);
+
                     #region Cập nhật vào bảng tồn
                     foreach(var current in productInstock)
                     {
