@@ -17,6 +17,7 @@ namespace FLS.ServerSide.Business.Biz
         private static IScopeContext scopeContext;
         private readonly IStockReceiveDocketService svcStockReceiveDocket;
         private readonly IStockReceiveDocketDetailService svcStockReceiveDocketDetail;
+        private readonly IStockReceiveDocketTypeService svcStockReceiveDocketType;
         private readonly IExpenditureDocketService svcExpenditureDocket;
         private readonly IExpenditureDocketDetailService svcExpenditureDocketDetail;
         private readonly ICurrentInStockService svcCurrentInStock;
@@ -26,6 +27,7 @@ namespace FLS.ServerSide.Business.Biz
             IScopeContext _scopeContext,
             IStockReceiveDocketService _svcStockReceiveDocket,
             IStockReceiveDocketDetailService _svcStockReceiveDocketDetail,
+            IStockReceiveDocketTypeService _svcStockReceiveDocketType,
             IExpenditureDocketService _svcExpenditureDocket,
             IExpenditureDocketDetailService _svcExpenditureDocketDetail,
             ICurrentInStockService _svcCurrentInStock,
@@ -35,6 +37,7 @@ namespace FLS.ServerSide.Business.Biz
             scopeContext = _scopeContext;
             svcStockReceiveDocket = _svcStockReceiveDocket;
             svcStockReceiveDocketDetail = _svcStockReceiveDocketDetail;
+            svcStockReceiveDocketType = _svcStockReceiveDocketType;
             svcExpenditureDocket = _svcExpenditureDocket;
             svcExpenditureDocketDetail = _svcExpenditureDocketDetail;
             svcCurrentInStock = _svcCurrentInStock;
@@ -75,6 +78,12 @@ namespace FLS.ServerSide.Business.Biz
                 scopeContext.AddError("Chưa chọn kho nhập");
                 return 0;
             }
+            // lấy loại phiếu chi
+            var receiveDocketType = await svcStockReceiveDocketType.GetDetail(_model.ReceiveDocket.StockReceiveDocketTypeId);
+            var paySlipType = 0;
+            if (receiveDocketType != null && receiveDocketType.PayslipNeeded)
+                paySlipType = receiveDocketType.PayslipTypeId;
+            // bắt đầu tạo phiếu
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
@@ -94,46 +103,63 @@ namespace FLS.ServerSide.Business.Biz
                     List<ProductInstockModel> productInstock = new List<ProductInstockModel>();
                     foreach (ImportStockSupplierModel item in _model.Suppliers)
                     {
-                        ExpenditureDocket exp = new ExpenditureDocket();
-                        exp.StockDocketId = docket.Id;
-                        exp.PartnerId = item.SupplierBranchId;
-                        exp.PartnerName = item.SupplierBranchName;
-                        exp.WarehouseId = docket.WarehouseId;
-                        exp.BillCode = item.BillCode;
-                        exp.BillSerial = item.BillSerial;
-                        exp.BillTemplateCode = item.BillTemplateCode;
-                        exp.BillDate = item.BillDate;
-                        exp.CreatedUser = "admin";
-                        exp.ExpendDate = docket.ExecutedDate;
-                        exp.Amount = 0;
-                        exp.TotalAmount = 0;
-                        exp.Vat = 0;
-                        exp.Id = await svcExpenditureDocket.Add(exp);
-
+                        ExpenditureDocket exp = null;
+                        if (paySlipType > 0)
+                        {
+                            exp = new ExpenditureDocket();
+                            exp.StockDocketId = docket.Id;
+                            exp.PartnerId = item.SupplierBranchId;
+                            exp.PartnerName = item.SupplierBranchName;
+                            exp.WarehouseId = docket.WarehouseId;
+                            exp.BillCode = item.BillCode;
+                            exp.BillSerial = item.BillSerial;
+                            exp.BillTemplateCode = item.BillTemplateCode;
+                            exp.BillDate = item.BillDate;
+                            exp.CreatedUser = "admin";
+                            exp.IsReceipt = false;
+                            exp.ExpendDate = docket.ExecutedDate;
+                            exp.Amount = 0;
+                            exp.TotalAmount = 0;
+                            exp.Vat = 0;
+                            exp.Id = await svcExpenditureDocket.Add(exp);
+                        }
+                        decimal supplierAmount = 0;
+                        decimal supplierTotalAmount = 0;
+                        decimal supplierVat = 0;
                         foreach (StockReceiveDocketDetailModel i in item.ReceiveDocketDetails)
                         {
                             StockReceiveDocketDetail docketDetail = iMapper.Map<StockReceiveDocketDetail>(i);
                             docketDetail.StockReceiveDocketId = docket.Id;
                             docketDetail.SupplierBranchId = item.SupplierBranchId;
                             docketDetail.SupplierBranchName = item.SupplierBranchName;
-                            docketDetail.Amount = i.Quantity * i.UnitPrice;
-                            docketDetail.Vat = docketDetail.Amount * (i.VatPercent / (decimal)100);
-                            docketDetail.TotalAmount = docketDetail.Amount + docketDetail.Vat;
+                            if (paySlipType > 0)
+                            {
+                                docketDetail.Amount = i.Quantity * i.UnitPrice;
+                                docketDetail.Vat = docketDetail.Amount * (i.VatPercent / (decimal)100);
+                                docketDetail.TotalAmount = docketDetail.Amount + docketDetail.Vat;
+                            }
+                            else
+                            {
+                                docketDetail.Amount = 0;
+                                docketDetail.Vat = 0;
+                                docketDetail.TotalAmount = 0;
+                            }
                             docketDetail.Id = await svcStockReceiveDocketDetail.Add(docketDetail);
-
-                            ExpenditureDocketDetail eD = new ExpenditureDocketDetail();
-                            eD.ExpenditureDocketId = exp.Id;
-                            eD.VatPercent = docketDetail.VatPercent;
-                            eD.Amount = docketDetail.Amount;
-                            eD.Vat = docketDetail.Vat;
-                            eD.TotalAmount = docketDetail.TotalAmount;
-                            eD.ProductId = docketDetail.ProductId;
-                            eD.ExpenditureTypeId = i.ReceiptTypeId;
-                            eD.Id = await svcExpenditureDocketDetail.Add(eD);
-
-                            exp.Amount += docketDetail.Amount;
-                            exp.TotalAmount += docketDetail.TotalAmount;
-                            exp.Vat += docketDetail.Vat;
+                            if (paySlipType > 0)
+                            {
+                                ExpenditureDocketDetail eD = new ExpenditureDocketDetail();
+                                eD.ExpenditureDocketId = exp.Id;
+                                eD.VatPercent = docketDetail.VatPercent;
+                                eD.Amount = docketDetail.Amount;
+                                eD.Vat = docketDetail.Vat;
+                                eD.TotalAmount = docketDetail.TotalAmount;
+                                eD.ProductId = docketDetail.ProductId;
+                                eD.ExpenditureTypeId = paySlipType;
+                                eD.Id = await svcExpenditureDocketDetail.Add(eD);
+                            }
+                            supplierAmount += docketDetail.Amount;
+                            supplierTotalAmount += docketDetail.TotalAmount;
+                            supplierVat += docketDetail.Vat;
 
                             #region Thêm vào danh sách tồn - Tạm thời chưa chuyển đổi sang số lượng theo đơn vị tính chuẩn
                             var idx = productInstock.FindIndex(p => p.ProductId == i.ProductId);
@@ -151,43 +177,58 @@ namespace FLS.ServerSide.Business.Biz
                             }
                             #endregion
                         }
-                        await svcExpenditureDocket.Modify(exp);
-                        orderVAT += exp.Vat;
-                        orderAmount += exp.Amount;
-                        orderTotalAmount += exp.TotalAmount;
+                        if(paySlipType > 0)
+                        {
+                            exp.Amount += supplierAmount;
+                            exp.TotalAmount += supplierTotalAmount;
+                            exp.Vat += supplierVat;
+                            await svcExpenditureDocket.Modify(exp);
+                        }
+                        orderVAT += supplierVat;
+                        orderAmount += supplierAmount;
+                        orderTotalAmount += supplierTotalAmount;
                     }
-
-                    ExpenditureDocket expendDocket = new ExpenditureDocket();
-                    expendDocket.StockDocketId = docket.Id;
-                    expendDocket.WarehouseId = docket.WarehouseId;
-                    expendDocket.CreatedUser = "admin";
-                    expendDocket.ExpendDate = docket.ExecutedDate;
-                    expendDocket.Amount = 0;
-                    expendDocket.TotalAmount = 0;
-                    expendDocket.Vat = 0;
-                    expendDocket.Id = await svcExpenditureDocket.Add(expendDocket);
-
-                    foreach (ExpenditureDocketDetailModel item in _model.PaySlipDetails)
+                    // nếu có chi phí phát sinh, tạo phiếu chi
+                    if (_model.PaySlipDetails != null && _model.PaySlipDetails.Count > 0)
                     {
-                        ExpenditureDocketDetail eD = iMapper.Map<ExpenditureDocketDetail>(item);
-                        eD.ExpenditureDocketId = expendDocket.Id;
-                        eD.Id = await svcExpenditureDocketDetail.Add(eD);
+                        ExpenditureDocket expendDocket = new ExpenditureDocket();
+                        expendDocket.StockDocketId = docket.Id;
+                        expendDocket.WarehouseId = docket.WarehouseId;
+                        expendDocket.CreatedUser = "admin";
+                        expendDocket.ExpendDate = docket.ExecutedDate;
+                        expendDocket.Amount = 0;
+                        expendDocket.TotalAmount = 0;
+                        expendDocket.Vat = 0;
+                        expendDocket.Id = await svcExpenditureDocket.Add(expendDocket);
 
-                        expendDocket.Amount += eD.Amount;
-                        expendDocket.TotalAmount += eD.TotalAmount;
-                        expendDocket.Vat += eD.Vat;
+                        foreach (ExpenditureDocketDetailModel item in _model.PaySlipDetails)
+                        {
+                            ExpenditureDocketDetail eD = iMapper.Map<ExpenditureDocketDetail>(item);
+                            eD.ExpenditureDocketId = expendDocket.Id;
+                            eD.Id = await svcExpenditureDocketDetail.Add(eD);
+
+                            expendDocket.Amount += eD.Amount;
+                            expendDocket.TotalAmount += eD.TotalAmount;
+                            expendDocket.Vat += eD.Vat;
+                        }
+                        await svcExpenditureDocket.Modify(expendDocket);
+                        orderVAT += expendDocket.Vat;
+                        orderAmount += expendDocket.Amount;
+                        orderTotalAmount += expendDocket.TotalAmount;
                     }
-                    await svcExpenditureDocket.Modify(expendDocket);
-                    orderVAT += expendDocket.Vat;
-                    orderAmount += expendDocket.Amount;
-                    orderTotalAmount += expendDocket.TotalAmount;
-
                     // cập nhật phiếu nhập
-                    docket.Vat = orderVAT;
-                    docket.Amount = orderAmount;
-                    docket.TotalAmount = orderTotalAmount;
-                    await svcStockReceiveDocket.Modify(docket);
-
+                    if (paySlipType > 0)
+                    {
+                        docket.Vat = orderVAT;
+                        docket.Amount = orderAmount;
+                        docket.TotalAmount = orderTotalAmount;
+                        await svcStockReceiveDocket.Modify(docket);
+                    } else
+                    {
+                        docket.Vat = 0;
+                        docket.Amount = 0;
+                        docket.TotalAmount = 0;
+                    }
                     #region Cập nhật vào bảng tồn
                     foreach(var current in productInstock)
                     {

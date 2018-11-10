@@ -17,6 +17,7 @@ namespace FLS.ServerSide.Business.Biz
         private static IScopeContext scopeContext;
         private readonly IStockIssueDocketService svcStockIssueDocket;
         private readonly IStockIssueDocketDetailService svcStockIssueDocketDetail;
+        private readonly IStockIssueDocketTypeService svcStockIssueDocketType;
         private readonly IExpenditureDocketService svcExpenditureDocket;
         private readonly IExpenditureDocketDetailService svcExpenditureDocketDetail;
         private readonly ICurrentInStockService svcCurrentInStock;
@@ -26,6 +27,7 @@ namespace FLS.ServerSide.Business.Biz
             IScopeContext _scopeContext,
             IStockIssueDocketService _svcStockIssueDocket,
             IStockIssueDocketDetailService _svcStockIssueDocketDetail,
+            IStockIssueDocketTypeService _svcStockIssueDocketType,
             IExpenditureDocketService _svcExpenditureDocket,
             IExpenditureDocketDetailService _svcExpenditureDocketDetail,
             ICurrentInStockService _svcCurrentInStock,
@@ -35,6 +37,7 @@ namespace FLS.ServerSide.Business.Biz
             scopeContext = _scopeContext;
             svcStockIssueDocket = _svcStockIssueDocket;
             svcStockIssueDocketDetail = _svcStockIssueDocketDetail;
+            svcStockIssueDocketType = _svcStockIssueDocketType;
             svcExpenditureDocket = _svcExpenditureDocket;
             svcExpenditureDocketDetail = _svcExpenditureDocketDetail;
             svcCurrentInStock = _svcCurrentInStock;
@@ -75,17 +78,27 @@ namespace FLS.ServerSide.Business.Biz
                 scopeContext.AddError("Chưa chọn kho nhập");
                 return 0;
             }
+            // lấy loại phiếu thu
+            var issueDocketType = await svcStockIssueDocketType.GetDetail(_model.IssueDocket.StockIssueDocketTypeId);
+            var receiptType = 0;
+            if (issueDocketType != null && issueDocketType.ReceiptNeeded)
+                receiptType = issueDocketType.ReceiptTypeId;
+            // bắt đầu tạo phiếu
             using (var transaction = context.Database.BeginTransaction())
             {
                 StockIssueDocket issueDocket = iMapper.Map<StockIssueDocket>(_model.IssueDocket);
                 issueDocket.CustomerId = _model.Receipt.PartnerId;
                 issueDocket.CustomerName = _model.Receipt.PartnerName;
-                ExpenditureDocket receipt = iMapper.Map<ExpenditureDocket>(_model.Receipt);
-                receipt.Amount = issueDocket.Amount;
-                receipt.Vat = issueDocket.Vat;
-                receipt.WarehouseId = issueDocket.WarehouseId;
-                receipt.CreatedUser = "admin";
-
+                ExpenditureDocket receipt = null;
+                if (receiptType > 0)
+                {
+                    receipt = iMapper.Map<ExpenditureDocket>(_model.Receipt);
+                    receipt.Amount = issueDocket.Amount;
+                    receipt.Vat = issueDocket.Vat;
+                    receipt.WarehouseId = issueDocket.WarehouseId;
+                    receipt.CreatedUser = "admin";
+                    receipt.IsReceipt = true;
+                }
                 List<StockIssueDocketDetail> docketDetails = iMapper.Map<List<StockIssueDocketDetail>>(_model.DocketDetails);
                 List<ExpenditureDocketDetail> expendDetails = new List<ExpenditureDocketDetail>();
                 decimal orderVAT = 0;
@@ -95,22 +108,29 @@ namespace FLS.ServerSide.Business.Biz
                 List<ProductInstockModel> productInstock = new List<ProductInstockModel>();
                 foreach (var item in docketDetails)
                 {
-                    item.Amount = item.Quantity * item.UnitPrice;
-                    item.Vat = item.Amount * (item.VatPercent / (decimal)100);
-                    item.TotalAmount = item.Amount + item.Vat;
-
-                    ExpenditureDocketDetail exDetail = new ExpenditureDocketDetail
+                    if (receiptType > 0)
                     {
-                        ExpenditureDocketId = receipt.Id,
-                        Amount = item.Amount,
-                        Vat = item.Vat,
-                        TotalAmount = item.TotalAmount
-                    };
-                    expendDetails.Add(exDetail);
-
-                    orderVAT += item.Vat;
-                    orderAmount += item.Amount;
-                    orderTotalAmount += item.TotalAmount;
+                        item.Amount = item.Quantity * item.UnitPrice;
+                        item.Vat = item.Amount * (item.VatPercent / (decimal)100);
+                        item.TotalAmount = item.Amount + item.Vat;
+                        ExpenditureDocketDetail exDetail = new ExpenditureDocketDetail
+                        {
+                            ExpenditureDocketId = receipt.Id,
+                            Amount = item.Amount,
+                            Vat = item.Vat,
+                            TotalAmount = item.TotalAmount
+                        };
+                        expendDetails.Add(exDetail);
+                        orderVAT += item.Vat;
+                        orderAmount += item.Amount;
+                        orderTotalAmount += item.TotalAmount;
+                    }
+                    else
+                    {
+                        item.Amount = 0;
+                        item.Vat = 0;
+                        item.TotalAmount = 0;
+                    }
 
                     #region Trừ vào danh sách tồn - Tạm thời chưa chuyển đổi sang số lượng theo đơn vị tính chuẩn
                     var idx = productInstock.FindIndex(p => p.ProductId == item.ProductId);
@@ -128,17 +148,28 @@ namespace FLS.ServerSide.Business.Biz
                     }
                     #endregion
                 }
-                issueDocket.Vat = orderVAT;
-                issueDocket.Amount = orderAmount;
-                issueDocket.TotalAmount = orderTotalAmount;
-                receipt.Vat = orderVAT;
-                receipt.Amount = orderAmount;
-                receipt.TotalAmount = orderTotalAmount;
                 // insert
-                issueDocket.Id = await svcStockIssueDocket.Add(issueDocket);
-                receipt.StockDocketId = issueDocket.Id;
-                receipt.Id = await svcExpenditureDocket.Add(receipt);
+                if (receiptType > 0)
+                {
+                    issueDocket.Vat = orderVAT;
+                    issueDocket.Amount = orderAmount;
+                    issueDocket.TotalAmount = orderTotalAmount;
+                    issueDocket.Id = await svcStockIssueDocket.Add(issueDocket);
 
+                    receipt.Vat = orderVAT;
+                    receipt.Amount = orderAmount;
+                    receipt.TotalAmount = orderTotalAmount;
+                    receipt.StockDocketId = issueDocket.Id;
+                    receipt.Id = await svcExpenditureDocket.Add(receipt);
+
+                }
+                else
+                {
+                    issueDocket.Vat = 0;
+                    issueDocket.Amount = 0;
+                    issueDocket.TotalAmount = 0;
+                    issueDocket.Id = await svcStockIssueDocket.Add(issueDocket);
+                }
                 foreach (var item in docketDetails)
                 {
                     item.StockIssueDocketId = issueDocket.Id;
