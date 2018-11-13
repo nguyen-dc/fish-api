@@ -18,7 +18,17 @@ namespace FLS.ServerSide.SharingObject
         public decimal Vat { get; set; }
         public decimal Amount { get; set; }
         public decimal TotalAmount { get; set; }
+        /// <summary>
+        /// Cho nhập con giống:
+        /// Kích cỡ con giống 
+        /// </summary>
         [NotMapped]
-        public int ReceiptTypeId { get; set; }
-    }
+        public decimal LivestockSize { get; set; }
+        /// <summary>
+        /// Cho nhập con giống:
+        /// Tổng trọng lượng cá giống (Kg)
+        /// </summary>
+        [NotMapped]
+        public decimal LivestockQuantity { get; set; }
+}
 }

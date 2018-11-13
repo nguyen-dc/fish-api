@@ -97,7 +97,7 @@ namespace FLS.ServerSide.Business.Biz
                     receipt.Amount = issueDocket.Amount;
                     receipt.Vat = issueDocket.Vat;
                     receipt.WarehouseId = issueDocket.WarehouseId;
-                    receipt.CreatedUser = "admin";
+                    receipt.CreatedUser = scopeContext.UserCode;
                     receipt.IsReceipt = true;
                 }
                 List<StockIssueDocketDetail> docketDetails = iMapper.Map<List<StockIssueDocketDetail>>(_model.DocketDetails);

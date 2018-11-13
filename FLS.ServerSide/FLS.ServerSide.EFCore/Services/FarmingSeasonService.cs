@@ -39,6 +39,17 @@ namespace FLS.ServerSide.EFCore.Services
             var item = await context.FarmingSeason.FirstOrDefaultAsync(x => x.Id == _id && x.IsDeleted == false);
             return item;
         }
+
+        public async Task<FarmingSeason> GetByFishPondId(int _fishPondId, DateTime? date = null)
+        {
+            date = date.GetValueOrDefault(DateTime.UtcNow);
+            var item = await context.FarmingSeason.FirstOrDefaultAsync(x => 
+            x.FishPondId == _fishPondId 
+            && date > x.StartFarmDate
+            && (x.FinishFarmDate == null || date < x.FinishFarmDate)
+            && x.IsDeleted == false);
+            return item;
+        }
         public async Task<int> Add(FarmingSeason _model)
         {
             _model.CreatedUser = scopeContext.UserCode;

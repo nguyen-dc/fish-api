@@ -27,7 +27,7 @@ namespace FLS.ServerSide.EFCore.Services
             {
                 int.TryParse(_model.Filters[0].Value + "", out filter);
             }
-            var GIONG_NUOI = (int)SystemIDEnum.ProductGroup_GiongNuoi; // ngành hàng giống nuôi
+            var GIONG_NUOI = (int)SystemIDEnum.ProductGroup_LivestockSeed;
             if (filter == GIONG_NUOI) return null;
            var items = await context.Product.Where(i => 
                         i.IsDeleted == false
@@ -41,7 +41,7 @@ namespace FLS.ServerSide.EFCore.Services
         public async Task<PagedList<Product>> GetLivestockList(PageFilterModel _model)
         {
             _model.Key = string.IsNullOrWhiteSpace(_model.Key) ? null : _model.Key.Trim();
-            var GIONG_NUOI = (int)SystemIDEnum.ProductGroup_GiongNuoi; // ngành hàng giống nuôi
+            var GIONG_NUOI = (int)SystemIDEnum.ProductGroup_LivestockSeed;
             var items = await context.Product.Where(i =>
                          i.IsDeleted == false
                          && (_model.Key == null || i.Name.Contains(_model.Key))

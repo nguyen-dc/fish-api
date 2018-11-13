@@ -37,8 +37,11 @@ namespace FLS.ServerSide.API.Systems
             services.AddScoped<IExpenditureDocketService, ExpenditureDocketService>();
             services.AddScoped<IExpenditureDocketDetailService, ExpenditureDocketDetailService>();
             services.AddScoped<IFarmingSeasonService, FarmingSeasonService>();
+            services.AddScoped<IFarmingSeasonHistoryService, FarmingSeasonHistoryService>();
             services.AddScoped<IFarmRegionService, FarmRegionService>();
+            services.AddScoped<IFeedConversionRateService, FeedConversionRateService>();
             services.AddScoped<IFishPondService, FishPondService>();
+            services.AddScoped<ILivestockHistoryDetailService, LivestockHistoryDetailService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IProductGroupService, ProductGroupService>();
             services.AddScoped<IProductSubgroupService, ProductSubgroupService>();

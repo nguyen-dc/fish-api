@@ -14,6 +14,6 @@ namespace FLS.ServerSide.Business.Interfaces
         Task<int> Add(ImportStockModel _model);
         Task<bool> Modify(int _id, StockReceiveDocketModel _model);
         Task<bool> Remove(int _id);
-        Task<int> ReleaseLivestock(ImportStockModel _model);
+        Task<int> ReleaseLivestock(ReleaseLivestockModel _model);
     }
 }
