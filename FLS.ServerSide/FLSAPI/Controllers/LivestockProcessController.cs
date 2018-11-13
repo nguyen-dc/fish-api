@@ -24,8 +24,8 @@ namespace FLS.ServerSide.API.Controllers
             context = _scopeContext;
             busStockReceiveDocket = _busStockReceiveDocket;
         }
-        [HttpPut("release")]
-        public async Task<IActionResult> ReleaseLivestock([FromBody]ImportStockModel _model)
+        [HttpPost("release")]
+        public async Task<IActionResult> ReleaseLivestock([FromBody]ReleaseLivestockModel _model)
         {
             var result = await busStockReceiveDocket.ReleaseLivestock(_model);
             return Ok(context.WrapResponse(result));

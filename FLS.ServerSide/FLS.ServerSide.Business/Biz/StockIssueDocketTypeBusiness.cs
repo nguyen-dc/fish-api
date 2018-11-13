@@ -45,7 +45,7 @@ namespace FLS.ServerSide.Business.Biz
         public async Task<List<IdNameModel>> GetCache()
         {
             var list = await svcStockIssueDocketType.GetCache();
-            list.RemoveAll(l => l.IsSystem == true && l.Id != (int)SystemIDEnum.ExportStockTypeDefault);
+            list.RemoveAll(l => l.IsSystem == true && l.Id != (int)SystemIDEnum.ExportStock_TypeDefault);
             var result = iMapper.Map<List<IdNameModel>>(list);
             return result;
         }

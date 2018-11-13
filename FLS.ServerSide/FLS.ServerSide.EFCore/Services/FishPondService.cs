@@ -69,6 +69,12 @@ namespace FLS.ServerSide.EFCore.Services
             var item = await context.FishPond.FirstOrDefaultAsync(x => x.Id == _id && x.IsDeleted == false);
             return item;
         }
+
+        public async Task<FishPond> GetByWarehouseId(int _warehouseId)
+        {
+            var item = await context.FishPond.FirstOrDefaultAsync(x => x.WarehouseId == _warehouseId && x.IsDeleted == false);
+            return item;
+        }
         public async Task<int> Add(FishPond _model)
         {
             _model.CreatedUser = scopeContext.UserCode;
