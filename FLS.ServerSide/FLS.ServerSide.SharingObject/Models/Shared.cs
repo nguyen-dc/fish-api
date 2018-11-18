@@ -36,6 +36,9 @@ namespace FLS.ServerSide.SharingObject
         public const string PRODUCT_ADD = "api/products/add";
         public const string PRODUCT_MODIFY = "api/products/{id}/modify";
         public const string PRODUCT_REMOVE = "api/products/{id}/remove";
+        public const string PRODUCT_UNIT_PRODUCT_ADD = "api/products/{id}/units/add";
+        public const string PRODUCT_UNIT_PRODUCT_MODIFY = "api/products/units/{id}/modify";
+        public const string PRODUCT_UNIT_PRODUCT_REMOVE = "api/products/units/{id}/remove";
         // PRODUCT_GROUP
         public const string PRODUCT_GROUP_SEARCH = "api/product-groups";
         public const string PRODUCT_GROUP_DETAIL = "api/product-groups/{id}";

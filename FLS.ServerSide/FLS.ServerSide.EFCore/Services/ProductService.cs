@@ -10,11 +10,14 @@ using FLS.ServerSide.Model.Scope;
 
 namespace FLS.ServerSide.EFCore.Services
 {
-    public class ProductService : IProductService
+    public class ProductService : EFCoreServiceBase, IProductService
     {
         private static FLSDbContext context;
         private static IScopeContext scopeContext;
-        public ProductService(FLSDbContext _context, IScopeContext _scopeContext)
+        public ProductService(
+            FLSDbContext _context, 
+            IScopeContext _scopeContext
+            ) : base(_context, _scopeContext)
         {
             context = _context;
             scopeContext = _scopeContext;
@@ -52,7 +55,21 @@ namespace FLS.ServerSide.EFCore.Services
         public async Task<Product> GetDetail(int _id)
         {
             var item = await context.Product.FirstOrDefaultAsync(x => x.Id == _id && x.IsDeleted == false);
+            if(item == null)
+            {
+                scopeContext.AddError("Mã sản phẩm không tồn tại");
+                return null;
+            }
             return item;
+        }
+        public async Task<List<ProductUnitProductModel>> GetUnits(int _productId)
+        {
+            var __params = new
+            {
+                productId = _productId
+            };
+            var details = await CallStored<ProductUnitProductModel>("SP_Product_Get_Units", __params).ToListAsync();
+            return details;
         }
         public async Task<int> Add(Product _model)
         {

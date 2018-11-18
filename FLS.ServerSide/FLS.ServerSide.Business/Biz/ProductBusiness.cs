@@ -28,7 +28,10 @@ namespace FLS.ServerSide.Business.Biz
         }
         public async Task<ProductModel> GetDetail(int _id)
         {
-            return iMapper.Map<ProductModel>(await svcProduct.GetDetail(_id));
+            var product = iMapper.Map<ProductModel>(await svcProduct.GetDetail(_id));
+            if(product != null)
+                product.ProductUnits = await svcProduct.GetUnits(_id);
+            return product;
         }
         public async Task<int> Add(ProductModel _model)
         {

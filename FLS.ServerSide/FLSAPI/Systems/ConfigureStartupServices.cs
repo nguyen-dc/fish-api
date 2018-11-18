@@ -21,6 +21,7 @@ namespace FLS.ServerSide.API.Systems
             services.AddScoped<IProductGroupBusiness, ProductGroupBusiness>();
             services.AddScoped<IProductSubgroupBusiness, ProductSubgroupBusiness>();
             services.AddScoped<IProductUnitBusiness, ProductUnitBusiness>();
+            services.AddScoped<IProductUnitProductBusiness, ProductUnitProductBusiness>();
             services.AddScoped<IExpenditureDocketTypeBusiness, ExpenditureDocketTypeBusiness>();
             services.AddScoped<IStockIssueDocketBusiness, StockIssueDocketBusiness>();
             services.AddScoped<IStockIssueDocketTypeBusiness, StockIssueDocketTypeBusiness>();
@@ -46,6 +47,7 @@ namespace FLS.ServerSide.API.Systems
             services.AddScoped<IProductGroupService, ProductGroupService>();
             services.AddScoped<IProductSubgroupService, ProductSubgroupService>();
             services.AddScoped<IProductUnitService, ProductUnitService>();
+            services.AddScoped<IProductUnitProductService, ProductUnitProductService>();
             services.AddScoped<IExpenditureDocketTypeService, ExpenditureDocketTypeService>();
             services.AddScoped<IStockIssueDocketService, StockIssueDocketService>();
             services.AddScoped<IStockIssueDocketDetailService, StockIssueDocketDetailService>();
