@@ -52,6 +52,7 @@ namespace FLS.ServerSide.EFCore.Entities
         {
             modelBuilder.Query<StockReceiveDocketDetailModel>();
             modelBuilder.Query<StockIssueDocketDetailModel>();
+            modelBuilder.Query<ProductUnitProductModel>();
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

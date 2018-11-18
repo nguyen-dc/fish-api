@@ -24,6 +24,7 @@ namespace FLS.ServerSide.API.Systems
             CreateMap<ProductModel, Product>(MemberList.Source).ReverseMap();
             CreateMap<ProductSubgroupModel, ProductSubgroup>(MemberList.Source).ReverseMap();
             CreateMap<ProductUnitModel, ProductUnit>(MemberList.Source).ReverseMap();
+            CreateMap<ProductUnitProductModel, ProductUnitProduct>(MemberList.Source).ReverseMap();
             CreateMap<StockIssueDocketModel, StockIssueDocket>(MemberList.Source).ReverseMap();
             CreateMap<StockIssueDocketDetailModel, StockIssueDocketDetail>(MemberList.Source).ReverseMap();
             CreateMap<StockIssueDocketTypeModel, StockIssueDocketType>(MemberList.Source).ReverseMap();
