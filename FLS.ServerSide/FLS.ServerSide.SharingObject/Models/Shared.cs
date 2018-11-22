@@ -131,10 +131,8 @@ namespace FLS.ServerSide.SharingObject
         public const string CACHE_WAREHOUSE_TYPE = "api/cache/warehouse-types";
 
         // LIVESTOCK PROCEED
-        /// <summary>
-        /// PUT
-        /// </summary>
         public const string LIVESTOCK_PROCEED_RELEASE = "api/livestock-proceeds/release";
+        public const string LIVESTOCK_PROCEED_FEED = "api/livestock-proceeds/feed";
     }
     static public class REQUEST_HEADER
     {

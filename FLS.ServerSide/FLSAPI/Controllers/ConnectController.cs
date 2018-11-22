@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FLS.ServerSide.Business.Interfaces;
+﻿using System.Threading.Tasks;
 using FLS.ServerSide.Model.Scope;
-using FLS.ServerSide.SharingObject;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
+using NDC.CoreLibs;
 
 namespace FLS.ServerSide.API.Controllers
 {
@@ -24,6 +19,20 @@ namespace FLS.ServerSide.API.Controllers
         public async Task<IActionResult> Connect()
         {
             return Ok(context.WrapResponse("Đã kết nối"));
+        }
+        [HttpPost("encode-key")]
+        public async Task<IActionResult> EncodeKey([FromBody] ObjString obj)
+        {
+            return Ok(obj.str.SecretKeyEncode());
+        }
+        [HttpPost("decode-key")]
+        public async Task<IActionResult> DecodeKey([FromBody] ObjString obj)
+        {
+            return Ok(obj.str.SecretKeyDecode());
+        }
+        public class ObjString
+        {
+            public string str { get; set; }
         }
     }
 }

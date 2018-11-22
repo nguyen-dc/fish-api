@@ -14,20 +14,26 @@ namespace FLS.ServerSide.API.Controllers
     {
         IConfiguration config;
         IScopeContext context;
-        IStockReceiveDocketBusiness busStockReceiveDocket;
+        ILivestockProcessBusiness busLivestockProcess;
         public LivestockProcessController(
             IConfiguration _config, 
-            IScopeContext _scopeContext, 
-            IStockReceiveDocketBusiness _busStockReceiveDocket
+            IScopeContext _scopeContext,
+            ILivestockProcessBusiness _busLivestockProcess
         ){
             config = _config;
             context = _scopeContext;
-            busStockReceiveDocket = _busStockReceiveDocket;
+            busLivestockProcess = _busLivestockProcess;
         }
         [HttpPost("release")]
         public async Task<IActionResult> ReleaseLivestock([FromBody]ReleaseLivestockModel _model)
         {
-            var result = await busStockReceiveDocket.ReleaseLivestock(_model);
+            var result = await busLivestockProcess.ReleaseLivestock(_model);
+            return Ok(context.WrapResponse(result));
+        }
+        [HttpPost("feed")]
+        public async Task<IActionResult> FeedingLivestock([FromBody]FeedingLivestockModel _model)
+        {
+            var result = await busLivestockProcess.FeedingLivestock(_model);
             return Ok(context.WrapResponse(result));
         }
     }
