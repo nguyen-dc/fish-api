@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NDC.CoreLibs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -42,7 +43,7 @@ namespace FLS.ServerSide.API
             services.AddDbContext<FLSDbContext>(
                 options => options.UseMySql
                 (
-                    Configuration.GetConnectionString("MySQLDB")
+                    Configuration.GetConnectionString("MySQLDB").SecretKeyDecode()
                 )
             );
             // -------- AutoMapper ---------

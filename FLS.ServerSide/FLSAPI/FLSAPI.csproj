@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\corelibs\CoreLibs\CoreLibs.csproj" />
     <ProjectReference Include="..\FLS.ServerSide.Business\FLS.ServerSide.Business.csproj" />
     <ProjectReference Include="..\FLS.ServerSide.EFCore\FLS.ServerSide.EFCore.csproj" />
     <ProjectReference Include="..\FLS.ServerSide.Model\FLS.ServerSide.Model.csproj" />

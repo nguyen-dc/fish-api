@@ -17,6 +17,7 @@ namespace FLS.ServerSide.API.Systems
             services.AddScoped<IFarmingSeasonBusiness, FarmingSeasonBusiness>();
             services.AddScoped<IFarmRegionBusiness, FarmRegionBusiness>();
             services.AddScoped<IFishPondBusiness, FishPondBusiness>();
+            services.AddScoped<ILivestockProcessBusiness, LivestockProcessBusiness>();
             services.AddScoped<IProductBusiness, ProductBusiness>();
             services.AddScoped<IProductGroupBusiness, ProductGroupBusiness>();
             services.AddScoped<IProductSubgroupBusiness, ProductSubgroupBusiness>();

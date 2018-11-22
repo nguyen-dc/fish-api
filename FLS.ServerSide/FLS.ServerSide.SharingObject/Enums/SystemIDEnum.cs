@@ -15,7 +15,7 @@ namespace FLS.ServerSide.SharingObject
         /// </summary>
         ExportStock_TypeDefault = 1,
 
-        #region ReleaseLiveStock
+        #region ReleaseLivestock
         /// <summary>
         /// loại phiếu nhập: nhập thả cá
         /// </summary>
@@ -29,7 +29,13 @@ namespace FLS.ServerSide.SharingObject
         /// </summary>
         ReleaseLiveStock_IssueType = 6,
         #endregion
-        
+
+        #region FeedingLivestock
+        /// <summary>
+        /// Loại phiếu xuất: xuất chuyển nội bộ (cho ăn/uống thuốc/chuyển kho)
+        /// </summary>
+        FeedingLivestock_IssueType = 4,
+        #endregion
         #region ProductGroup
         /// <summary>
         /// Ngành hàng giống nuôi
