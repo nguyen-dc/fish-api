@@ -17,7 +17,6 @@ namespace FLS.ServerSide.Business.Biz
         private static IScopeContext scopeContext;
         private readonly IStockReceiveDocketService svcStockReceiveDocket;
         private readonly IStockReceiveDocketDetailService svcStockReceiveDocketDetail;
-        private readonly IStockReceiveDocketTypeService svcStockReceiveDocketType;
         private readonly IExpenditureDocketService svcExpenditureDocket;
         private readonly IExpenditureDocketDetailService svcExpenditureDocketDetail;
         private readonly ICurrentInStockService svcCurrentInStock;
@@ -29,13 +28,13 @@ namespace FLS.ServerSide.Business.Biz
         private readonly IFeedConversionRateService svcFeedConversionRate;
         private readonly IFarmingSeasonHistoryService svcFarmingSeasonHistory;
         private readonly ILivestockHistoryDetailService svcLivestockHistoryDetail;
+        private readonly IStockHistoryDetailService svcStockHistoryDetail;
         private readonly IMapper iMapper;
         public LivestockProcessBusiness(
             FLSDbContext _context,
             IScopeContext _scopeContext,
             IStockReceiveDocketService _svcStockReceiveDocket,
             IStockReceiveDocketDetailService _svcStockReceiveDocketDetail,
-            IStockReceiveDocketTypeService _svcStockReceiveDocketType,
             IExpenditureDocketService _svcExpenditureDocket,
             IExpenditureDocketDetailService _svcExpenditureDocketDetail,
             ICurrentInStockService _svcCurrentInStock,
@@ -47,13 +46,13 @@ namespace FLS.ServerSide.Business.Biz
             IFeedConversionRateService _svcFeedConversionRate,
             IFarmingSeasonHistoryService _svcFarmingSeasonHistory,
             ILivestockHistoryDetailService _svcLivestockHistoryDetail,
+            IStockHistoryDetailService _svcStockHistoryDetail,
             IMapper _iMapper)
         {
             context = _context;
             scopeContext = _scopeContext;
             svcStockReceiveDocket = _svcStockReceiveDocket;
             svcStockReceiveDocketDetail = _svcStockReceiveDocketDetail;
-            svcStockReceiveDocketType = _svcStockReceiveDocketType;
             svcExpenditureDocket = _svcExpenditureDocket;
             svcExpenditureDocketDetail = _svcExpenditureDocketDetail;
             svcCurrentInStock = _svcCurrentInStock;
@@ -65,6 +64,7 @@ namespace FLS.ServerSide.Business.Biz
             svcFeedConversionRate = _svcFeedConversionRate;
             svcFarmingSeasonHistory = _svcFarmingSeasonHistory;
             svcLivestockHistoryDetail = _svcLivestockHistoryDetail;
+            svcStockHistoryDetail = _svcStockHistoryDetail;
             iMapper = _iMapper;
         }
         public async Task<int> ReleaseLivestock(ReleaseLivestockModel _model)
@@ -279,7 +279,7 @@ namespace FLS.ServerSide.Business.Biz
                     transaction.Commit();
                     return docket.Id;
                 }
-                catch(Exception ex)
+                catch
                 {
                     transaction.Rollback();
                     return 0;
@@ -314,24 +314,32 @@ namespace FLS.ServerSide.Business.Biz
                 scopeContext.AddError("Lỗi dữ liệu kho mặc định cho ao");
                 return 0;
             }
+            _model.FeedDate = _model.FeedDate.GetValueOrDefault(DateTime.UtcNow);
             // bắt đầu tạo phiếu
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
+                    // Phiếu xuất kho mặc định
                     StockIssueDocket issueDocket = new StockIssueDocket();
                     issueDocket.CustomerId = _model.FishPondWarehouseId;
                     issueDocket.CustomerName = thisFishPond.Name;
                     issueDocket.Description = "Cho ăn";
-                    issueDocket.ExecutedDate = _model.FeedDate;
+                    issueDocket.ExecutedDate = _model.FeedDate.Value;
                     issueDocket.ExecutorCode = scopeContext.UserCode;
                     issueDocket.IssueDate = _model.FeedDate;
                     issueDocket.StockIssueDocketTypeId = (int)SystemIDEnum.FeedingLivestock_IssueType;
                     issueDocket.WarehouseId = thisFishPondWarehouse.DefaultWarehouseId;
                     issueDocket.Id = await svcStockIssueDocket.Add(issueDocket);
-
+                    // Lịch sử đợt nuôi (master lịch sử ao nuôi)
+                    FarmingSeasonHistory history = new FarmingSeasonHistory();
+                    history.ActionDate = _model.FeedDate.Value;
+                    history.ActionType = (int)SystemIDEnum.FarmingSeason_ActionType_Feed;
+                    history.Description = "Cho ăn";
+                    history.FarmingSeasonId = thisFarmingSeason.Id;
+                    history.Id = await svcFarmingSeasonHistory.Add(history);
+                    // Chi tiết phiếu xuất kho mặc định
                     List<StockIssueDocketDetail> docketDetails = iMapper.Map<List<StockIssueDocketDetail>>(_model.Details);
-                    List<ProductInstockModel> productInstock = new List<ProductInstockModel>();
                     decimal orderVAT = 0;
                     decimal orderAmount = 0;
                     decimal orderTotalAmount = 0;
@@ -370,6 +378,13 @@ namespace FLS.ServerSide.Business.Biz
                             await svcCurrentInStock.Modify(cis);
                         }
                         #endregion
+                        // Lịch sử hàng hóa
+                        StockHistoryDetail historyDetail = new StockHistoryDetail();
+                        historyDetail.HistoryId = history.Id;
+                        historyDetail.ProductId = item.ProductId;
+                        historyDetail.Amount = item.Quantity;
+                        historyDetail.ProductUnitId = item.ProductUnitId; // kg
+                        historyDetail.Id = await svcStockHistoryDetail.Add(historyDetail);
                     }
                     issueDocket.Vat = orderVAT;
                     issueDocket.Amount = orderAmount;

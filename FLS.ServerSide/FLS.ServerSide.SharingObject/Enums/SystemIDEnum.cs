@@ -41,8 +41,10 @@ namespace FLS.ServerSide.SharingObject
         /// Ngành hàng giống nuôi
         /// </summary>
         ProductGroup_LivestockSeed = 1,
+        ProductGroup_Food = 2,
+        ProductGroup_Medicine = 3,
         #endregion
-        
+
         #region FarmingSeason
         /// <summary>
         /// Lịch sử đợt nuôi: 

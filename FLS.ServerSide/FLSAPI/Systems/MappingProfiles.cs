@@ -91,6 +91,7 @@ namespace FLS.ServerSide.API.Systems
             CreateMap<Warehouse, IdNameModel>(MemberList.Destination)
                 .ForMember(d => d.id, m => m.MapFrom(s => s.Id))
                 .ForMember(d => d.name, m => m.MapFrom(s => s.Name))
+                .ForMember(d => d.parentId, m => m.MapFrom(s => s.FarmRegionId))
                 .ForMember(d => d.description, m => m.MapFrom(s => s.Name));
             CreateMap<WarehouseType, IdNameModel>(MemberList.Destination)
                 .ForMember(d => d.id, m => m.MapFrom(s => s.Id))

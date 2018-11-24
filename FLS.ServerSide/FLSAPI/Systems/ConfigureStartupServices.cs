@@ -50,6 +50,7 @@ namespace FLS.ServerSide.API.Systems
             services.AddScoped<IProductUnitService, ProductUnitService>();
             services.AddScoped<IProductUnitProductService, ProductUnitProductService>();
             services.AddScoped<IExpenditureDocketTypeService, ExpenditureDocketTypeService>();
+            services.AddScoped<IStockHistoryDetailService, StockHistoryDetailService>();
             services.AddScoped<IStockIssueDocketService, StockIssueDocketService>();
             services.AddScoped<IStockIssueDocketDetailService, StockIssueDocketDetailService>();
             services.AddScoped<IStockIssueDocketTypeService, StockIssueDocketTypeService>();
