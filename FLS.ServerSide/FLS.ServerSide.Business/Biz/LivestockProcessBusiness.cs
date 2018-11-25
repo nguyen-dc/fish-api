@@ -208,7 +208,7 @@ namespace FLS.ServerSide.Business.Biz
                             //Tỷ lệ tăng trọng
                             FeedConversionRate fcr = new FeedConversionRate();
                             fcr.FarmingSeasonId = thisFarmingSeason.Id;
-                            fcr.IsAuto = true;
+                            fcr.IsAuto = false;
                             fcr.ProductId = docketDetail.ProductId;
                             fcr.SurveyDate = _model.LivestockDocket.ReceiveDate.GetValueOrDefault(DateTime.UtcNow);
                             fcr.Quantity = i.LivestockQuantity;
@@ -290,7 +290,7 @@ namespace FLS.ServerSide.Business.Biz
         {
             if (_model.FishPondWarehouseId <= 0)
             {
-                scopeContext.AddError("Chưa chọn ao thả giống");
+                scopeContext.AddError("Chưa chọn ao cho ăn");
                 return 0;
             }
             // dữ liệu ao
@@ -394,7 +394,122 @@ namespace FLS.ServerSide.Business.Biz
                     transaction.Commit();
                     return issueDocket.Id;
                 }
-                catch (Exception ex)
+                catch
+                {
+                    transaction.Rollback();
+                    return 0;
+                }
+            }
+        }
+        public async Task<int> CuringLivestock(FeedingLivestockModel _model)
+        {
+            if (_model.FishPondWarehouseId <= 0)
+            {
+                scopeContext.AddError("Chưa chọn ao rải thuốc");
+                return 0;
+            }
+            // dữ liệu ao
+            var thisFishPond = await svcFishPond.GetByWarehouseId(_model.FishPondWarehouseId);
+            if (thisFishPond == null)
+            {
+                scopeContext.AddError("Lỗi dữ liệu kho-ao " + _model.FishPondWarehouseId);
+                return 0;
+            }
+            // đợt nuôi
+            var thisFarmingSeason = await svcFarmingSeason.GetByFishPondId(thisFishPond.Id);
+            if (thisFarmingSeason == null)
+            {
+                scopeContext.AddError("Ao này chưa vào đợt nuôi");
+                return 0;
+            }
+            // dữ liệu kho-ao
+            var thisFishPondWarehouse = await svcWarehouse.GetDetail(_model.FishPondWarehouseId);
+            if (thisFishPondWarehouse == null || thisFishPondWarehouse.DefaultWarehouseId <= 0)
+            {
+                scopeContext.AddError("Lỗi dữ liệu kho mặc định cho ao");
+                return 0;
+            }
+            _model.FeedDate = _model.FeedDate.GetValueOrDefault(DateTime.UtcNow);
+            // bắt đầu tạo phiếu
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Phiếu xuất kho mặc định
+                    StockIssueDocket issueDocket = new StockIssueDocket();
+                    issueDocket.CustomerId = _model.FishPondWarehouseId;
+                    issueDocket.CustomerName = thisFishPond.Name;
+                    issueDocket.Description = "Rải thuốc";
+                    issueDocket.ExecutedDate = _model.FeedDate.Value;
+                    issueDocket.ExecutorCode = scopeContext.UserCode;
+                    issueDocket.IssueDate = _model.FeedDate;
+                    issueDocket.StockIssueDocketTypeId = (int)SystemIDEnum.FeedingLivestock_IssueType;
+                    issueDocket.WarehouseId = thisFishPondWarehouse.DefaultWarehouseId;
+                    issueDocket.Id = await svcStockIssueDocket.Add(issueDocket);
+                    // Lịch sử đợt nuôi (master lịch sử ao nuôi)
+                    FarmingSeasonHistory history = new FarmingSeasonHistory();
+                    history.ActionDate = _model.FeedDate.Value;
+                    history.ActionType = (int)SystemIDEnum.FarmingSeason_ActionType_Medicine;
+                    history.Description = "Rải thuốc";
+                    history.FarmingSeasonId = thisFarmingSeason.Id;
+                    history.Id = await svcFarmingSeasonHistory.Add(history);
+                    // Chi tiết phiếu xuất kho mặc định
+                    List<StockIssueDocketDetail> docketDetails = iMapper.Map<List<StockIssueDocketDetail>>(_model.Details);
+                    decimal orderVAT = 0;
+                    decimal orderAmount = 0;
+                    decimal orderTotalAmount = 0;
+                    foreach (var item in docketDetails)
+                    {
+                        item.StockIssueDocketId = issueDocket.Id;
+                        item.UnitPrice = 0;
+                        item.Amount = item.Quantity * item.UnitPrice;
+                        item.Vat = item.Amount * (item.VatPercent / (decimal)100);
+                        item.TotalAmount = item.Amount + item.Vat;
+                        item.Id = await svcStockIssueDocketDetail.Add(item);
+
+                        orderVAT += item.Vat;
+                        orderAmount += item.Amount;
+                        orderTotalAmount += item.TotalAmount;
+
+                        #region Trừ vào danh sách tồn - Tạm thời chưa chuyển đổi sang số lượng theo đơn vị tính chuẩn
+                        var instock = await svcCurrentInStock.GetList(issueDocket.WarehouseId, item.ProductId);
+                        if (instock == null || instock.Count == 0)
+                        {
+                            CurrentInStock cis = new CurrentInStock()
+                            {
+                                Amount = 0 - item.Quantity,
+                                AmountExpect = 0 - item.Quantity,
+                                ProductId = item.ProductId,
+                                ProductUnitId = item.ProductUnitId,
+                                WarehouseId = issueDocket.WarehouseId
+                            };
+                            cis.Id = await svcCurrentInStock.Add(cis);
+                        }
+                        else
+                        {
+                            CurrentInStock cis = instock[0];
+                            cis.Amount -= item.Quantity;
+                            cis.AmountExpect -= item.Quantity;
+                            await svcCurrentInStock.Modify(cis);
+                        }
+                        #endregion
+                        // Lịch sử hàng hóa
+                        StockHistoryDetail historyDetail = new StockHistoryDetail();
+                        historyDetail.HistoryId = history.Id;
+                        historyDetail.ProductId = item.ProductId;
+                        historyDetail.Amount = item.Quantity;
+                        historyDetail.ProductUnitId = item.ProductUnitId; // kg
+                        historyDetail.Id = await svcStockHistoryDetail.Add(historyDetail);
+                    }
+                    issueDocket.Vat = orderVAT;
+                    issueDocket.Amount = orderAmount;
+                    issueDocket.TotalAmount = orderTotalAmount;
+                    await svcStockIssueDocket.Modify(issueDocket);
+
+                    transaction.Commit();
+                    return issueDocket.Id;
+                }
+                catch
                 {
                     transaction.Rollback();
                     return 0;

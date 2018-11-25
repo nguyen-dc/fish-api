@@ -25,7 +25,7 @@ namespace FLS.ServerSide.EFCore.Services
             var items = await context.StockIssueDocket.Where(i => 
                         i.IsDeleted == false
                         &&(_model.Key == null || i.CustomerName.Contains(_model.Key))
-                    ).OrderByDescending(i => i.UpdatedDate.HasValue ? i.UpdatedDate : i.CreatedDate).GetPagedList(_model.Page, _model.PageSize);
+                    ).OrderByDescending(i => i.Id).GetPagedList(_model.Page, _model.PageSize);
             return items;
         }
         public async Task<StockIssueDocket> GetDetail(int _id)

@@ -11,5 +11,6 @@ namespace FLS.ServerSide.Business.Interfaces
     {
         Task<int> ReleaseLivestock(ReleaseLivestockModel _model);
         Task<int> FeedingLivestock(FeedingLivestockModel _model);
+        Task<int> CuringLivestock(FeedingLivestockModel _model);
     }
 }

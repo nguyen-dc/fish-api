@@ -31,7 +31,7 @@ namespace FLS.ServerSide.EFCore.Services
                         i.IsDeleted == false
                         && (_model.Key == null || i.Name.Contains(_model.Key))
                         && (filter == 0 || i.ProductGroupId == filter)
-                    ).OrderByDescending(i => i.UpdatedDate.HasValue ? i.UpdatedDate : i.CreatedDate).GetPagedList(_model.Page, _model.PageSize);
+                    ).OrderByDescending(i => i.Id).GetPagedList(_model.Page, _model.PageSize);
             return items;
         }
         public async Task<ProductSubgroup> GetDetail(int _id)

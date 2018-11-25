@@ -36,5 +36,11 @@ namespace FLS.ServerSide.API.Controllers
             var result = await busLivestockProcess.FeedingLivestock(_model);
             return Ok(context.WrapResponse(result));
         }
+        [HttpPost("cure")]
+        public async Task<IActionResult> CuringLivestock([FromBody]FeedingLivestockModel _model)
+        {
+            var result = await busLivestockProcess.CuringLivestock(_model);
+            return Ok(context.WrapResponse(result));
+        }
     }
 }

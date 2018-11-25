@@ -25,7 +25,7 @@ namespace FLS.ServerSide.EFCore.Services
             var items = await context.ExpenditureDocketDetail.Where(i => 
                         i.IsDeleted == false
                         //&&(_model.Key == null || i.name.Contains(_model.Key))
-                    ).OrderByDescending(i => i.UpdatedDate.HasValue ? i.UpdatedDate : i.CreatedDate).GetPagedList(_model.Page, _model.PageSize);
+                    ).OrderByDescending(i => i.Id).GetPagedList(_model.Page, _model.PageSize);
             return items;
         }
         public async Task<ExpenditureDocketDetail> GetDetail(int _id)

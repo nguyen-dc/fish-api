@@ -133,6 +133,7 @@ namespace FLS.ServerSide.SharingObject
         // LIVESTOCK PROCEED
         public const string LIVESTOCK_PROCEED_RELEASE = "api/livestock-proceeds/release";
         public const string LIVESTOCK_PROCEED_FEED = "api/livestock-proceeds/feed";
+        public const string LIVESTOCK_PROCEED_CURE = "api/livestock-proceeds/cure";
     }
     static public class REQUEST_HEADER
     {
