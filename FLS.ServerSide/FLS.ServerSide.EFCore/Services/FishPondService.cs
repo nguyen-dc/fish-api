@@ -38,7 +38,7 @@ namespace FLS.ServerSide.EFCore.Services
                         i.IsDeleted == false
                         && (_model.Key == null || i.Name.Contains(_model.Key))
                         && (filter == 0 || i.FarmRegionId == filter)
-                    ).OrderByDescending(i => i.UpdatedDate.HasValue ? i.UpdatedDate : i.CreatedDate).GetPagedList(_model.Page, _model.PageSize);
+                    ).OrderByDescending(i => i.Id).GetPagedList(_model.Page, _model.PageSize);
             PagedList<FishPondModel> result = iMapper.Map<PagedList<FishPondModel>>(items);
             // lấy ds kho tương ứng
             var idList = items.Items.Select(i => i.WarehouseId);
