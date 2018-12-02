@@ -71,6 +71,11 @@ namespace FLS.ServerSide.SharingObject
         /// Action cân trọng
         /// </summary>
         FarmingSeason_ActionType_FCR = 5,
+        /// <summary>
+        /// Lịch sử đợt nuôi: 
+        /// Action cân trọng
+        /// </summary>
+        FarmingSeason_ActionType_Collect_Deadstock = 6,
         #endregion
     }
 }

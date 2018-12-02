@@ -42,5 +42,17 @@ namespace FLS.ServerSide.API.Controllers
             var result = await busLivestockProcess.CuringLivestock(_model);
             return Ok(context.WrapResponse(result));
         }
+        [HttpPost("fcr-check")]
+        public async Task<IActionResult> FCRCheck([FromBody]FCRCheckModel _model)
+        {
+            var result = await busLivestockProcess.FCRCheck(_model);
+            return Ok(context.WrapResponse(result));
+        }
+        [HttpPost("deadstocks/collect")]
+        public async Task<IActionResult> CollectDeadstock([FromBody]CollectDeadstockRequest _model)
+        {
+            var result = await busLivestockProcess.CollectDeadstock(_model);
+            return Ok(context.WrapResponse(result));
+        }
     }
 }

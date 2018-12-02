@@ -53,6 +53,10 @@ namespace FLS.ServerSide.EFCore.Entities
             modelBuilder.Query<StockReceiveDocketDetailModel>();
             modelBuilder.Query<StockIssueDocketDetailModel>();
             modelBuilder.Query<ProductUnitProductModel>();
+            modelBuilder.Query<ReportLivestockHistoryDetail>();
+            modelBuilder.Query<ReportFeedConversionRate>();
+            modelBuilder.Query<ReportFarmingSeasonHistoryStock>();
+            modelBuilder.Query<ReportFarmingSeason>();
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
