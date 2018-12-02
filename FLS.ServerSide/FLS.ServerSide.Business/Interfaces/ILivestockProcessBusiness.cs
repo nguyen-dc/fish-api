@@ -12,5 +12,7 @@ namespace FLS.ServerSide.Business.Interfaces
         Task<int> ReleaseLivestock(ReleaseLivestockModel _model);
         Task<int> FeedingLivestock(FeedingLivestockModel _model);
         Task<int> CuringLivestock(FeedingLivestockModel _model);
+        Task<int> FCRCheck(FCRCheckModel _model);
+        Task<int> CollectDeadstock(CollectDeadstockRequest _model);
     }
 }

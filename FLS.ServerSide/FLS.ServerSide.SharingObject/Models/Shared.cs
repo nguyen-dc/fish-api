@@ -134,9 +134,17 @@ namespace FLS.ServerSide.SharingObject
         public const string LIVESTOCK_PROCEED_RELEASE = "api/livestock-proceeds/release";
         public const string LIVESTOCK_PROCEED_FEED = "api/livestock-proceeds/feed";
         public const string LIVESTOCK_PROCEED_CURE = "api/livestock-proceeds/cure";
+        public const string LIVESTOCK_PROCEED_CHECK_FCR = "api/livestock-proceeds/fcr-check";
+        public const string LIVESTOCK_PROCEED_COLLECT_DEADSTOCK = "api/livestock-proceeds/deadstocks/collect";
+
+        // REPORTS
+        public const string REPORT_LIVESTOCK_HISTORY_DETAIL = "api/reports/livestock-history-detail";
+        public const string REPORT_FEED_CONVERSION_RATE = "api/reports/feed-conversion-rate";
+        public const string REPORT_FARMINGSEASON = "api/reports/farmingseason";
+        public const string REPORT_FARMINGSEASON_STOCK_HISTORY = "api/reports/farmingseason-stock-history";
     }
     static public class REQUEST_HEADER
     {
         public const string USERNAME = "fls-acss-usrnme";
     }
-    }
+}

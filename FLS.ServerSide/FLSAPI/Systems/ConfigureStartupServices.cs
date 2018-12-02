@@ -14,6 +14,7 @@ namespace FLS.ServerSide.API.Systems
             services.AddScoped<IScopeContext, ScopeContext>();
             // -- Businesses
             services.AddScoped<ICustomerBusiness, CustomerBusiness>();
+            services.AddScoped<IExpenditureDocketTypeBusiness, ExpenditureDocketTypeBusiness>();
             services.AddScoped<IFarmingSeasonBusiness, FarmingSeasonBusiness>();
             services.AddScoped<IFarmRegionBusiness, FarmRegionBusiness>();
             services.AddScoped<IFishPondBusiness, FishPondBusiness>();
@@ -23,7 +24,7 @@ namespace FLS.ServerSide.API.Systems
             services.AddScoped<IProductSubgroupBusiness, ProductSubgroupBusiness>();
             services.AddScoped<IProductUnitBusiness, ProductUnitBusiness>();
             services.AddScoped<IProductUnitProductBusiness, ProductUnitProductBusiness>();
-            services.AddScoped<IExpenditureDocketTypeBusiness, ExpenditureDocketTypeBusiness>();
+            services.AddScoped<IReportBusiness, ReportBusiness>();
             services.AddScoped<IStockIssueDocketBusiness, StockIssueDocketBusiness>();
             services.AddScoped<IStockIssueDocketTypeBusiness, StockIssueDocketTypeBusiness>();
             services.AddScoped<IStockReceiveDocketBusiness, StockReceiveDocketBusiness>();
@@ -38,6 +39,7 @@ namespace FLS.ServerSide.API.Systems
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IExpenditureDocketService, ExpenditureDocketService>();
             services.AddScoped<IExpenditureDocketDetailService, ExpenditureDocketDetailService>();
+            services.AddScoped<IExpenditureDocketTypeService, ExpenditureDocketTypeService>();
             services.AddScoped<IFarmingSeasonService, FarmingSeasonService>();
             services.AddScoped<IFarmingSeasonHistoryService, FarmingSeasonHistoryService>();
             services.AddScoped<IFarmRegionService, FarmRegionService>();
@@ -49,7 +51,7 @@ namespace FLS.ServerSide.API.Systems
             services.AddScoped<IProductSubgroupService, ProductSubgroupService>();
             services.AddScoped<IProductUnitService, ProductUnitService>();
             services.AddScoped<IProductUnitProductService, ProductUnitProductService>();
-            services.AddScoped<IExpenditureDocketTypeService, ExpenditureDocketTypeService>();
+            services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IStockHistoryDetailService, StockHistoryDetailService>();
             services.AddScoped<IStockIssueDocketService, StockIssueDocketService>();
             services.AddScoped<IStockIssueDocketDetailService, StockIssueDocketDetailService>();

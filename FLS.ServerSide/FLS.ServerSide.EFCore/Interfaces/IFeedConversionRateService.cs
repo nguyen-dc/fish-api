@@ -8,6 +8,7 @@ namespace FLS.ServerSide.EFCore.Services
     public interface IFeedConversionRateService
     {
         Task<FeedConversionRate> GetDetail(int _id);
+        Task<FeedConversionRate> GetLast(int _farmingSeasonId, int livestockId);
         Task<int> Add(FeedConversionRate _model);
         Task<bool> Modify(FeedConversionRate _model);
     }

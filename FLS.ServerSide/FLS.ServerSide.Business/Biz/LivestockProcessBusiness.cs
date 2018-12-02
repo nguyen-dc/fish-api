@@ -29,6 +29,7 @@ namespace FLS.ServerSide.Business.Biz
         private readonly IFarmingSeasonHistoryService svcFarmingSeasonHistory;
         private readonly ILivestockHistoryDetailService svcLivestockHistoryDetail;
         private readonly IStockHistoryDetailService svcStockHistoryDetail;
+        private readonly IProductService svcProduct;
         private readonly IMapper iMapper;
         public LivestockProcessBusiness(
             FLSDbContext _context,
@@ -47,6 +48,7 @@ namespace FLS.ServerSide.Business.Biz
             IFarmingSeasonHistoryService _svcFarmingSeasonHistory,
             ILivestockHistoryDetailService _svcLivestockHistoryDetail,
             IStockHistoryDetailService _svcStockHistoryDetail,
+            IProductService _svcProduct,
             IMapper _iMapper)
         {
             context = _context;
@@ -65,11 +67,12 @@ namespace FLS.ServerSide.Business.Biz
             svcFarmingSeasonHistory = _svcFarmingSeasonHistory;
             svcLivestockHistoryDetail = _svcLivestockHistoryDetail;
             svcStockHistoryDetail = _svcStockHistoryDetail;
+            svcProduct = _svcProduct;
             iMapper = _iMapper;
         }
         public async Task<int> ReleaseLivestock(ReleaseLivestockModel _model)
         {
-            if (_model == null || _model.LivestockDocket == null || _model.Suppliers == null)
+            if (_model == null || _model.LivestockDocket == null || _model.Livestock == null || _model.Suppliers == null)
             {
                 scopeContext.AddError("Lỗi dữ liệu đầu vào");
                 return 0;
@@ -81,7 +84,7 @@ namespace FLS.ServerSide.Business.Biz
             }
             // dữ liệu ao
             var thisFishPond = await svcFishPond.GetByWarehouseId(_model.LivestockDocket.FishPondWarehouseId);
-            if(thisFishPond == null)
+            if (thisFishPond == null)
             {
                 scopeContext.AddError("Lỗi dữ liệu kho-ao " + _model.LivestockDocket.FishPondWarehouseId);
                 return 0;
@@ -143,9 +146,39 @@ namespace FLS.ServerSide.Business.Biz
                     decimal orderVAT = 0;
                     decimal orderAmount = 0;
                     decimal orderTotalAmount = 0;
-                    List<ProductInstockModel> productInstock = new List<ProductInstockModel>();
-                    foreach (ImportStockSupplierModel item in _model.Suppliers)
+                    decimal livestockMassAmount = 0;
+                    decimal livestockQuantity = 0;
+                    //List<FeedConversionRate> fcrList = new List<FeedConversionRate>();
+                    foreach (ReleaseStockSupplierModel item in _model.Suppliers)
                     {
+                        // Chi tiết phiếu nhập
+                        StockReceiveDocketDetail docketDetail = new StockReceiveDocketDetail();
+                        docketDetail.ProductId = _model.Livestock.Id;
+                        docketDetail.ProductUnitId = _model.Livestock.DefaultUnitId;
+                        docketDetail.Quantity = item.MassAmount;
+                        docketDetail.UnitPrice = item.PricePerKg;
+                        docketDetail.VatPercent = _model.Livestock.TaxPercent;
+                        docketDetail.StockReceiveDocketId = docket.Id;
+                        docketDetail.SupplierBranchId = item.SupplierBranchId;
+                        docketDetail.SupplierBranchName = item.SupplierBranchName;
+                        docketDetail.Amount = item.MassAmount * item.PricePerKg;
+                        docketDetail.Vat = docketDetail.Amount * (_model.Livestock.TaxPercent / (decimal)100);
+                        docketDetail.TotalAmount = docketDetail.Amount + docketDetail.Vat;
+                        docketDetail.Id = await svcStockReceiveDocketDetail.Add(docketDetail);
+
+                        // Chi tiết phiếu xuất
+                        StockIssueDocketDetail issueDocketDetail = new StockIssueDocketDetail();
+                        issueDocketDetail.StockIssueDocketId = issueDocket.Id;
+                        issueDocketDetail.ProductId = docketDetail.ProductId;
+                        issueDocketDetail.ProductUnitId = docketDetail.ProductUnitId;
+                        issueDocketDetail.Quantity = docketDetail.Quantity;
+                        issueDocketDetail.UnitPrice = docketDetail.UnitPrice;
+                        issueDocketDetail.VatPercent = docketDetail.VatPercent;
+                        issueDocketDetail.Amount = docketDetail.Amount;
+                        issueDocketDetail.Vat = docketDetail.Vat;
+                        issueDocketDetail.TotalAmount = docketDetail.TotalAmount;
+                        issueDocketDetail.Id = await svcStockIssueDocketDetail.Add(issueDocketDetail);
+
                         ExpenditureDocket exp = null;
                         exp = new ExpenditureDocket();
                         exp.StockDocketId = docket.Id;
@@ -159,82 +192,37 @@ namespace FLS.ServerSide.Business.Biz
                         exp.CreatedUser = scopeContext.UserCode;
                         exp.IsReceipt = false;
                         exp.ExpendDate = docket.ExecutedDate;
-                        exp.Amount = 0;
-                        exp.TotalAmount = 0;
-                        exp.Vat = 0;
+                        exp.Amount = docketDetail.Amount;
+                        exp.TotalAmount = docketDetail.TotalAmount;
+                        exp.Vat = docketDetail.Vat;
                         exp.Id = await svcExpenditureDocket.Add(exp);
-                        
-                        decimal supplierAmount = 0;
-                        decimal supplierTotalAmount = 0;
-                        decimal supplierVat = 0;
-                        foreach (StockReceiveDocketDetailModel i in item.ReceiveDocketDetails)
-                        {
-                            // Chi tiết phiếu nhập
-                            StockReceiveDocketDetail docketDetail = iMapper.Map<StockReceiveDocketDetail>(i);
-                            docketDetail.StockReceiveDocketId = docket.Id;
-                            docketDetail.SupplierBranchId = item.SupplierBranchId;
-                            docketDetail.SupplierBranchName = item.SupplierBranchName;
-                            docketDetail.Amount = i.Quantity * i.UnitPrice;
-                            docketDetail.Vat = docketDetail.Amount * (i.VatPercent / (decimal)100);
-                            docketDetail.TotalAmount = docketDetail.Amount + docketDetail.Vat;
-                            docketDetail.Id = await svcStockReceiveDocketDetail.Add(docketDetail);
-                            // Chi tiết phiếu xuất
-                            StockIssueDocketDetail issueDocketDetail = new StockIssueDocketDetail();
-                            issueDocketDetail.StockIssueDocketId = issueDocket.Id;
-                            issueDocketDetail.ProductId = docketDetail.ProductId;
-                            issueDocketDetail.ProductUnitId = docketDetail.ProductUnitId;
-                            issueDocketDetail.Quantity = docketDetail.Quantity;
-                            issueDocketDetail.UnitPrice = docketDetail.UnitPrice;
-                            issueDocketDetail.VatPercent = docketDetail.VatPercent;
-                            issueDocketDetail.Amount = docketDetail.Amount;
-                            issueDocketDetail.Vat = docketDetail.Vat;
-                            issueDocketDetail.TotalAmount = docketDetail.TotalAmount;
-                            issueDocketDetail.Id = await svcStockIssueDocketDetail.Add(issueDocketDetail);
-                            // Chi tiết phiếu chi
-                            ExpenditureDocketDetail eD = new ExpenditureDocketDetail();
-                            eD.ExpenditureDocketId = exp.Id;
-                            eD.VatPercent = docketDetail.VatPercent;
-                            eD.Amount = docketDetail.Amount;
-                            eD.Vat = docketDetail.Vat;
-                            eD.TotalAmount = docketDetail.TotalAmount;
-                            eD.ProductId = docketDetail.ProductId;
-                            eD.ExpenditureTypeId = (int)SystemIDEnum.ReleaseLiveStock_ExpenditureType;
-                            eD.Id = await svcExpenditureDocketDetail.Add(eD);
 
-                            supplierAmount += docketDetail.Amount;
-                            supplierTotalAmount += docketDetail.TotalAmount;
-                            supplierVat += docketDetail.Vat;
+                        // Chi tiết phiếu chi
+                        ExpenditureDocketDetail eD = new ExpenditureDocketDetail();
+                        eD.ExpenditureDocketId = exp.Id;
+                        eD.VatPercent = docketDetail.VatPercent;
+                        eD.Amount = docketDetail.Amount;
+                        eD.Vat = docketDetail.Vat;
+                        eD.TotalAmount = docketDetail.TotalAmount;
+                        eD.ProductId = docketDetail.ProductId;
+                        eD.ExpenditureTypeId = (int)SystemIDEnum.ReleaseLiveStock_ExpenditureType;
+                        eD.Id = await svcExpenditureDocketDetail.Add(eD);
 
-                            //Tỷ lệ tăng trọng
-                            FeedConversionRate fcr = new FeedConversionRate();
-                            fcr.FarmingSeasonId = thisFarmingSeason.Id;
-                            fcr.IsAuto = false;
-                            fcr.ProductId = docketDetail.ProductId;
-                            fcr.SurveyDate = _model.LivestockDocket.ReceiveDate.GetValueOrDefault(DateTime.UtcNow);
-                            fcr.Quantity = i.LivestockQuantity;
-                            fcr.MassAmount = i.Quantity; // kg
-                            fcr.Weight = 1000 / (i.LivestockQuantity/ i.Quantity); // gram
-                            fcr.ProductName = "";
-                            fcr.Id = await svcFeedConversionRate.Add(fcr);
+                        // Lịch sử con giống (detail lịch sử ao nuôi)
+                        LivestockHistoryDetail historyDetail = new LivestockHistoryDetail();
+                        historyDetail.HistoryId = history.Id;
+                        historyDetail.LivestockId = _model.Livestock.Id;
+                        historyDetail.Quantity = item.Quantity;
+                        historyDetail.MassAmount = item.MassAmount; // kg
+                        historyDetail.LivestockSize = item.Size; // con/kg = (MassAmount / Quantity) * 1000
+                        historyDetail.Weight = 1000 / (historyDetail.Quantity / historyDetail.MassAmount); // gram/con
+                        historyDetail.Id = await svcLivestockHistoryDetail.Add(historyDetail);
 
-                            // Lịch sử con giống (detail lịch sử ao nuôi)
-                            LivestockHistoryDetail historyDetail = new LivestockHistoryDetail();
-                            historyDetail.HistoryId = history.Id;
-                            historyDetail.LivestockId = docketDetail.ProductId;
-                            historyDetail.LivestockSize = i.LivestockSize;
-                            historyDetail.MassAmount = i.Quantity; // kg
-                            historyDetail.Quantity = i.LivestockQuantity;
-                            historyDetail.Weight = fcr.Weight; // gram
-                            historyDetail.Id = await svcLivestockHistoryDetail.Add(historyDetail);
-                        }
-                        exp.Amount += supplierAmount;
-                        exp.TotalAmount += supplierTotalAmount;
-                        exp.Vat += supplierVat;
-                        await svcExpenditureDocket.Modify(exp);
-                        
-                        orderVAT += supplierVat;
-                        orderAmount += supplierAmount;
-                        orderTotalAmount += supplierTotalAmount;
+                        orderVAT += docketDetail.Vat;
+                        orderAmount += docketDetail.Amount;
+                        orderTotalAmount += docketDetail.TotalAmount;
+                        livestockMassAmount += item.MassAmount;
+                        livestockQuantity += item.Quantity;
                     }
                     // cập nhật phiếu xuất
                     issueDocket.Vat = orderVAT;
@@ -242,6 +230,18 @@ namespace FLS.ServerSide.Business.Biz
                     issueDocket.TotalAmount = orderTotalAmount;
                     await svcStockIssueDocket.Modify(issueDocket);
 
+                    //Tỷ lệ tăng trọng
+                    FeedConversionRate fcr = new FeedConversionRate();
+                    fcr.FarmingSeasonId = thisFarmingSeason.Id;
+                    fcr.IsAuto = false;
+                    fcr.ProductId = _model.Livestock.Id;
+                    fcr.SurveyDate = _model.LivestockDocket.ReceiveDate.GetValueOrDefault(DateTime.UtcNow);
+                    fcr.Quantity = livestockQuantity; // số lượng cá
+                    fcr.MassAmount = livestockMassAmount; // tổng kg cá
+                    fcr.Weight = 1000 / (fcr.Quantity / fcr.MassAmount); // gram/con
+                    fcr.ProductName = _model.Livestock.Name;
+                    fcr.Id = await svcFeedConversionRate.Add(fcr);
+                    
                     // nếu có chi phí phát sinh, tạo phiếu chi
                     if (_model.PaySlipDetails != null && _model.PaySlipDetails.Count > 0)
                     {
@@ -508,6 +508,200 @@ namespace FLS.ServerSide.Business.Biz
 
                     transaction.Commit();
                     return issueDocket.Id;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    return 0;
+                }
+            }
+        }
+        public async Task<int> CollectDeadstock(CollectDeadstockRequest _model)
+        {
+            if (_model.FishPondWarehouseId <= 0)
+            {
+                scopeContext.AddError("Chưa chọn ao");
+                return 0;
+            }
+            if (_model.MassAmount <= 0)
+            {
+                scopeContext.AddError("Tổng trọng lượng không đúng");
+                return 0;
+            }
+            if (_model.Ratio <= 0)
+            {
+                scopeContext.AddError("Tỷ lệ không đúng");
+                return 0;
+            }
+            // dữ liệu ao
+            var thisFishPond = await svcFishPond.GetByWarehouseId(_model.FishPondWarehouseId);
+            if (thisFishPond == null)
+            {
+                scopeContext.AddError("Lỗi dữ liệu kho-ao " + _model.FishPondWarehouseId);
+                return 0;
+            }
+            // đợt nuôi
+            var thisFarmingSeason = await svcFarmingSeason.GetByFishPondId(thisFishPond.Id);
+            if (thisFarmingSeason == null)
+            {
+                scopeContext.AddError("Ao này chưa vào đợt nuôi");
+                return 0;
+            }
+            // dữ liệu kho-ao
+            var thisFishPondWarehouse = await svcWarehouse.GetDetail(_model.FishPondWarehouseId);
+            if (thisFishPondWarehouse == null || thisFishPondWarehouse.DefaultWarehouseId <= 0)
+            {
+                scopeContext.AddError("Lỗi dữ liệu kho mặc định cho ao");
+                return 0;
+            }
+            _model.CollectDate = _model.CollectDate.GetValueOrDefault(DateTime.UtcNow);
+            if (_model.DeadstockId <= 0)
+            {
+                scopeContext.AddError("Mã giống nuôi không tồn tại");
+                return 0;
+            }
+            var deadstock = await svcProduct.GetDetail(_model.DeadstockId);
+            if (deadstock == null)
+            {
+                scopeContext.AddError("Mã giống nuôi không tồn tại");
+                return 0;
+            }
+            var lastFCR = await svcFeedConversionRate.GetLast(thisFarmingSeason.Id, _model.DeadstockId);
+            if (lastFCR == null)
+            {
+                scopeContext.AddError("Ao không có đợt thả nào cho giống nuôi này");
+                return 0;
+            }
+            if (lastFCR.SurveyDate.Date >= _model.CollectDate.Value.Date)
+            {
+                scopeContext.AddError($"Ngày {_model.CollectDate.Value.ToString("dd/MM/yyyy")} đã được kiểm tra cân trọng");
+                return 0;
+            }
+            // bắt đầu tạo phiếu
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Lịch sử đợt nuôi (master lịch sử ao nuôi)
+                    FarmingSeasonHistory history = new FarmingSeasonHistory();
+                    history.ActionDate = _model.CollectDate.Value;
+                    history.ActionType = (int)SystemIDEnum.FarmingSeason_ActionType_Collect_Deadstock;
+                    history.Description = "Kiểm cá chết";
+                    history.FarmingSeasonId = thisFarmingSeason.Id;
+                    history.Id = await svcFarmingSeasonHistory.Add(history);
+
+                    // Lịch sử con giống (detail lịch sử ao nuôi)
+                    LivestockHistoryDetail historyDetail = new LivestockHistoryDetail();
+                    historyDetail.HistoryId = history.Id;
+                    historyDetail.LivestockId = _model.DeadstockId;
+                    historyDetail.MassAmount = _model.MassAmount; // kg
+                    historyDetail.DeadstockRatio = _model.Ratio; // Tỷ lệ dùng tính toán số lượng khi kiểm trọng
+                    historyDetail.Id = await svcLivestockHistoryDetail.Add(historyDetail);
+                    
+                    transaction.Commit();
+                    return history.Id;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    return 0;
+                }
+            }
+        }
+        public async Task<int> FCRCheck(FCRCheckModel _model)
+        {
+            if (_model.FishPondWarehouseId <= 0)
+            {
+                scopeContext.AddError("Chưa chọn ao");
+                return 0;
+            }
+            if (_model.Weight <= 0)
+            {
+                scopeContext.AddError("Trọng lượng không đúng");
+                return 0;
+            }
+            // dữ liệu ao
+            var thisFishPond = await svcFishPond.GetByWarehouseId(_model.FishPondWarehouseId);
+            if (thisFishPond == null)
+            {
+                scopeContext.AddError("Lỗi dữ liệu kho-ao " + _model.FishPondWarehouseId);
+                return 0;
+            }
+            // đợt nuôi
+            var thisFarmingSeason = await svcFarmingSeason.GetByFishPondId(thisFishPond.Id);
+            if (thisFarmingSeason == null)
+            {
+                scopeContext.AddError("Ao này chưa vào đợt nuôi");
+                return 0;
+            }
+            // dữ liệu kho-ao
+            var thisFishPondWarehouse = await svcWarehouse.GetDetail(_model.FishPondWarehouseId);
+            if (thisFishPondWarehouse == null || thisFishPondWarehouse.DefaultWarehouseId <= 0)
+            {
+                scopeContext.AddError("Lỗi dữ liệu kho mặc định cho ao");
+                return 0;
+            }
+            _model.CheckDate = _model.CheckDate.GetValueOrDefault(DateTime.UtcNow);
+            if(_model.LivestockId <= 0)
+            {
+                scopeContext.AddError("Mã giống nuôi không tồn tại");
+                return 0;
+            }
+            var livestock = await svcProduct.GetDetail(_model.LivestockId);
+            if (livestock == null)
+            {
+                scopeContext.AddError("Mã giống nuôi không tồn tại");
+                return 0;
+            }
+            var lastFCR = await svcFeedConversionRate.GetLast(thisFarmingSeason.Id, _model.LivestockId);
+            if(lastFCR == null)
+            {
+                scopeContext.AddError("Ao không có đợt thả nào cho giống nuôi này");
+                return 0;
+            }
+            if(lastFCR.SurveyDate.Date > _model.CheckDate.Value.Date)
+            {
+                scopeContext.AddError($"Ngày {_model.CheckDate.Value.ToString("dd/MM/yyyy")} đã được kiểm tra cân trọng" );
+                return 0;
+            }
+            // tính hệ số tăng trọng:
+
+            // bắt đầu tạo phiếu
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    //Tỷ lệ tăng trọng
+                    FeedConversionRate fcr = new FeedConversionRate();
+                    //fcr.FarmingSeasonId = thisFarmingSeason.Id;
+                    //fcr.IsAuto = false;
+                    //fcr.ProductId = _model.LivestockId;
+                    //fcr.SurveyDate = _model.CheckDate.Value;
+                    //fcr.Quantity = _model.Quantity;
+                    //fcr.MassAmount = _model.MassAmount; // kg
+                    //fcr.Weight = 1000 / (fcr.Quantity / fcr.MassAmount); // gram
+                    //fcr.ProductName = "";
+                    //fcr.Id = await svcFeedConversionRate.Add(fcr);
+
+                    //// Lịch sử đợt nuôi (master lịch sử ao nuôi)
+                    //FarmingSeasonHistory history = new FarmingSeasonHistory();
+                    //history.ActionDate = _model.CheckDate.Value;
+                    //history.ActionType = (int)SystemIDEnum.FarmingSeason_ActionType_FCR;
+                    //history.Description = "Kiểm tra tăng trọng";
+                    //history.FarmingSeasonId = thisFarmingSeason.Id;
+                    //history.Id = await svcFarmingSeasonHistory.Add(history);
+
+                    //// Lịch sử con giống (detail lịch sử ao nuôi)
+                    //LivestockHistoryDetail historyDetail = new LivestockHistoryDetail();
+                    //historyDetail.HistoryId = history.Id;
+                    //historyDetail.LivestockId = _model.LivestockId;
+                    //historyDetail.MassAmount = _model.MassAmount; // kg
+                    //historyDetail.Quantity = _model.Quantity;
+                    //historyDetail.Weight = fcr.Weight; // gram
+                    //historyDetail.Id = await svcLivestockHistoryDetail.Add(historyDetail);
+
+                    //transaction.Commit();
+                    return fcr.Id;
                 }
                 catch
                 {

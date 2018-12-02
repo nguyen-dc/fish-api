@@ -24,6 +24,16 @@ namespace FLS.ServerSide.EFCore.Services
             var item = await context.FeedConversionRate.FirstOrDefaultAsync(x => x.Id == _id);
             return item;
         }
+        public async Task<FeedConversionRate> GetLast(int _farmingSeasonId, int _livestockId)
+        {
+            var item = await context.FeedConversionRate
+                .LastOrDefaultAsync(x =>
+                    x.FarmingSeasonId == _farmingSeasonId
+                    && x.ProductId == _livestockId
+                    && x.IsAuto == false
+                );
+            return item;
+        }
         public async Task<int> Add(FeedConversionRate _model)
         {
             _model.CreatedUser = scopeContext.UserCode;
