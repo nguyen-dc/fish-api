@@ -12,7 +12,7 @@ namespace FLS.ServerSide.SharingObject
     }
     public class ReportLivestockHistoryDetail
     {
-        public int FarmingSeasonId { get; set; }
+        public int ActionTypeId { get; set; }
         public string SeasonName { get; set; }
         public int FarmHistoryId { get; set; }
         public DateTime ActionDate { get; set; }
@@ -25,5 +25,8 @@ namespace FLS.ServerSide.SharingObject
         public decimal Quantity { get; set; }
         public decimal MassAmount { get; set; }
         public decimal DeadstockRatio { get; set; }
+        public decimal QtyFood { get; set; }
+        public decimal QtyMedicine { get; set; }
+        public string MedicineName { get; set; }
     }
 }
