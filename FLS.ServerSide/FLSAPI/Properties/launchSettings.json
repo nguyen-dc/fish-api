@@ -1,4 +1,12 @@
 {
+  "FLSAPI": {
+    "commandName": "Project",
+    "launchBrowser": true,
+    "launchUrl": "http://localhost:8300/",
+    "environmentVariables": {
+      "ASPNETCORE_ENVIRONMENT": "Development"
+    }
+  },
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
@@ -11,22 +19,11 @@
       "sslPort": 0
     }
   },
-  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "IIS Express": {
-      "commandName": "Project",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
     "FLSAPI": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/connect",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
+      "launchUrl": "http://localhost:8300/api/connect",
       "applicationUrl": "http://localhost:8300"
     }
   }
