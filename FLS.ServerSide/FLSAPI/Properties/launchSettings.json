@@ -1,12 +1,5 @@
 {
-  "FLSAPI": {
-    "commandName": "Project",
-    "launchBrowser": true,
-    "launchUrl": "http://localhost:8300/",
-    "environmentVariables": {
-      "ASPNETCORE_ENVIRONMENT": "Development"
-    }
-  },
+
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
@@ -24,7 +17,10 @@
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "http://localhost:8300/api/connect",
-      "applicationUrl": "http://localhost:8300"
+      "applicationUrl": "http://localhost:8300",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   }
 }
