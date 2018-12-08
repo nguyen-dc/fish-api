@@ -68,7 +68,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.CapitalCost1)
                     .HasColumnName("capital_cost")
-                    .HasColumnType("decimal(18,9)")
+                    .HasColumnType("decimal(27,9)")
                     .HasDefaultValueSql("'0.000000000'");
 
                 entity.Property(e => e.CreatedDate)
@@ -99,7 +99,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.PreviousCapitalCost)
                     .HasColumnName("previous_capital_cost")
-                    .HasColumnType("decimal(18,9)")
+                    .HasColumnType("decimal(27,9)")
                     .HasDefaultValueSql("'0.000000000'");
 
                 entity.Property(e => e.ProductId)
@@ -127,11 +127,11 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Amount)
                     .HasColumnName("amount")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.AmountExpect)
                     .HasColumnName("amount_expect")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.ProductId)
                     .HasColumnName("product_id")
@@ -220,7 +220,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Amount)
                     .HasColumnName("amount")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.BillCode)
                     .HasColumnName("bill_code")
@@ -282,11 +282,11 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.TotalAmount)
                     .HasColumnName("total_amount")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.UnpaidAmount)
                     .HasColumnName("unpaid_amount")
-                    .HasColumnType("decimal(18,9)")
+                    .HasColumnType("decimal(27,9)")
                     .HasDefaultValueSql("'0.000000000'");
 
                 entity.Property(e => e.UpdatedDate)
@@ -299,7 +299,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Vat)
                     .HasColumnName("VAT")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.WarehouseId)
                     .HasColumnName("warehouse_id")
@@ -314,7 +314,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Amount)
                     .HasColumnName("amount")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnName("created_date")
@@ -356,7 +356,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.TotalAmount)
                     .HasColumnName("total_amount")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.UpdatedDate)
                     .HasColumnName("updated_date")
@@ -368,7 +368,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Vat)
                     .HasColumnName("VAT")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.VatPercent)
                     .HasColumnName("vat_percent")
@@ -613,7 +613,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Fcr)
                     .HasColumnName("FCR")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.IsAuto)
                     .HasColumnName("is_auto")
@@ -631,7 +631,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.MassAmount)
                     .HasColumnName("mass_amount")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.ProductId)
                     .HasColumnName("product_id")
@@ -644,7 +644,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Quantity)
                     .HasColumnName("quantity")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.SurveyDate)
                     .HasColumnName("survey_date")
@@ -660,7 +660,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Weight)
                     .HasColumnName("weight")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
             });
 
             modelBuilder.Entity<FishPond>(entity =>
@@ -669,11 +669,11 @@ namespace FLS.ServerSide.EFCore.Entities
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
-                entity.Property(e => e.A).HasColumnType("decimal(18,9)");
+                entity.Property(e => e.A).HasColumnType("decimal(27,9)");
 
-                entity.Property(e => e.B).HasColumnType("decimal(18,9)");
+                entity.Property(e => e.B).HasColumnType("decimal(27,9)");
 
-                entity.Property(e => e.C).HasColumnType("decimal(18,9)");
+                entity.Property(e => e.C).HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnName("created_date")
@@ -685,7 +685,7 @@ namespace FLS.ServerSide.EFCore.Entities
                     .HasColumnName("created_user")
                     .HasColumnType("varchar(50)");
 
-                entity.Property(e => e.D).HasColumnType("decimal(18,9)");
+                entity.Property(e => e.D).HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.DeletedDate)
                     .HasColumnName("deleted_date")
@@ -697,7 +697,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Depth)
                     .HasColumnName("depth")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.FarmRegionId)
                     .HasColumnName("farm_region_id")
@@ -730,7 +730,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.WaterSurfaceArea)
                     .HasColumnName("water_surface_area")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
             });
 
             modelBuilder.Entity<InStockHistory>(entity =>
@@ -741,11 +741,11 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Amount)
                     .HasColumnName("amount")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.AmountExpect)
                     .HasColumnName("amount_expect")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnName("created_date")
@@ -844,11 +844,11 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.MassAmount)
                     .HasColumnName("mass_amount")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.Quantity)
                     .HasColumnName("quantity")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.UpdatedDate)
                     .HasColumnName("updated_date")
@@ -860,7 +860,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Weight)
                     .HasColumnName("weight")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
             });
 
             modelBuilder.Entity<Personnel>(entity =>
@@ -1280,7 +1280,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.DefaultUnitValue)
                     .HasColumnName("default_unit_value")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.DeletedDate)
                     .HasColumnName("deleted_date")
@@ -1319,7 +1319,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Amount)
                     .HasColumnName("amount")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnName("created_date")
@@ -1376,7 +1376,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Amount)
                     .HasColumnName("amount")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.ApprovedDate)
                     .HasColumnName("approved_date")
@@ -1388,7 +1388,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.CapitalCost)
                     .HasColumnName("capital_cost")
-                    .HasColumnType("decimal(18,9)")
+                    .HasColumnType("decimal(27,9)")
                     .HasDefaultValueSql("'0.000000000'");
 
                 entity.Property(e => e.CreatedDate)
@@ -1456,7 +1456,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.TotalAmount)
                     .HasColumnName("total_amount")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.UpdatedDate)
                     .HasColumnName("updated_date")
@@ -1468,7 +1468,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Vat)
                     .HasColumnName("VAT")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.WarehouseId)
                     .HasColumnName("warehouse_id")
@@ -1483,11 +1483,11 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Amount)
                     .HasColumnName("amount")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.CapitalCost)
                     .HasColumnName("capital_cost")
-                    .HasColumnType("decimal(18,9)")
+                    .HasColumnType("decimal(27,9)")
                     .HasDefaultValueSql("'0.000000000'");
 
                 entity.Property(e => e.CreatedDate)
@@ -1522,7 +1522,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Quantity)
                     .HasColumnName("quantity")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.StockIssueDocketId)
                     .HasColumnName("stock_issue_docket_id")
@@ -1530,11 +1530,11 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.TotalAmount)
                     .HasColumnName("total_amount")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.UnitPrice)
                     .HasColumnName("unit_price")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.UpdatedDate)
                     .HasColumnName("updated_date")
@@ -1546,7 +1546,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Vat)
                     .HasColumnName("VAT")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.VatPercent)
                     .HasColumnName("vat_percent")
@@ -1635,7 +1635,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Amount)
                     .HasColumnName("amount")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.ApprovedDate)
                     .HasColumnName("approved_date")
@@ -1703,7 +1703,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.TotalAmount)
                     .HasColumnName("total_amount")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.UpdatedDate)
                     .HasColumnName("updated_date")
@@ -1715,7 +1715,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Vat)
                     .HasColumnName("VAT")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.WarehouseId)
                     .HasColumnName("warehouse_id")
@@ -1730,7 +1730,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Amount)
                     .HasColumnName("amount")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnName("created_date")
@@ -1764,7 +1764,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Quantity)
                     .HasColumnName("quantity")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.StockReceiveDocketId)
                     .HasColumnName("stock_receive_docket_id")
@@ -1780,11 +1780,11 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.TotalAmount)
                     .HasColumnName("total_amount")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.UnitPrice)
                     .HasColumnName("unit_price")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.UpdatedDate)
                     .HasColumnName("updated_date")
@@ -1796,7 +1796,7 @@ namespace FLS.ServerSide.EFCore.Entities
 
                 entity.Property(e => e.Vat)
                     .HasColumnName("VAT")
-                    .HasColumnType("decimal(18,9)");
+                    .HasColumnType("decimal(27,9)");
 
                 entity.Property(e => e.VatPercent)
                     .HasColumnName("vat_percent")

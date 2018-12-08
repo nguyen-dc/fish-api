@@ -17,7 +17,9 @@ namespace FLS.ServerSide.SharingObject
         public DateTime StartFarmDate { get; set; }
         public DateTime FinishFarmDate { get; set; }
         public int ProductGroupId { get; set; }
+        public string ProductGroupName { get; set; }
         public int ProductSubgroupId { get; set; }
+        public string ProductSubgroupName { get; set; }
         public int ProductId { get; set; }
         public string ProductName { get; set; }
         public int ProductUnitId { get; set; }
