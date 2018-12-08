@@ -21,8 +21,8 @@ namespace FLS.ServerSide.SharingObject
         public decimal Depth { get; set; }
         public int FarmingSeasonId { get; set; }
         public DateTime ActionDate { get; set; }
-        public string ActionType { get; set; }
-        public decimal HistoryId { get; set; }
+        public int ActionType { get; set; }
+        public int HistoryId { get; set; }
         public decimal MassAmount { get; set; }
         public decimal Quantity { get; set; }
         public decimal AverageQuantity { get; set; }
