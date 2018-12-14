@@ -12,10 +12,6 @@ namespace FLS.ServerSide.SharingObject
     }
     public class ReportFarmingSeasonHistoryStock
     {
-        public int FarmingSeasonId { get; set; }
-        public int FishPondId { get; set; }
-        public DateTime StartFarmDate { get; set; }
-        public DateTime FinishFarmDate { get; set; }
         public int ProductGroupId { get; set; }
         public string ProductGroupName { get; set; }
         public int ProductSubgroupId { get; set; }
