@@ -647,8 +647,9 @@ namespace FLS.ServerSide.Business.Biz
                 scopeContext.AddError("Mã giống nuôi không tồn tại");
                 return 0;
             }
+            // dữ liệu con giống
             var livestock = await svcProduct.GetDetail(_model.LivestockId);
-            if (livestock == null)
+            if (livestock == null || livestock.ProductGroupId != (int)SystemIDEnum.ProductGroup_LivestockSeed)
             {
                 scopeContext.AddError("Mã giống nuôi không tồn tại");
                 return 0;
@@ -664,8 +665,14 @@ namespace FLS.ServerSide.Business.Biz
                 scopeContext.AddError($"Ngày {_model.CheckDate.Value.ToString("dd/MM/yyyy")} đã được kiểm tra cân trọng" );
                 return 0;
             }
-            // tính hệ số tăng trọng:
 
+            // tính hệ số tăng trọng:
+            //Số ngày = ngày nhập sau -ngày nhập trước(1 / 7 đến 1 / 8 = 31 ngày)
+            //Tỷ trọng tăng = Trọng lượng sau -trọng lượng trước
+            //Hằng số biến đổi = Tỷ trọng tăng ^ (1 / số ngày)
+            int dateNumber = DateTime.Compare(_model.CheckDate.Value.Date, lastFCR.SurveyDate.Date);
+            double weightChange = (double)(_model.Weight - lastFCR.Weight);
+            double tempoRatio = Math.Pow(weightChange, (1 / dateNumber)) ;
             // bắt đầu tạo phiếu
             using (var transaction = context.Database.BeginTransaction())
             {
@@ -673,15 +680,16 @@ namespace FLS.ServerSide.Business.Biz
                 {
                     //Tỷ lệ tăng trọng
                     FeedConversionRate fcr = new FeedConversionRate();
-                    //fcr.FarmingSeasonId = thisFarmingSeason.Id;
-                    //fcr.IsAuto = false;
-                    //fcr.ProductId = _model.LivestockId;
-                    //fcr.SurveyDate = _model.CheckDate.Value;
-                    //fcr.Quantity = _model.Quantity;
-                    //fcr.MassAmount = _model.MassAmount; // kg
+                    fcr.FarmingSeasonId = thisFarmingSeason.Id;
+                    fcr.IsAuto = false;
+                    fcr.ProductId = livestock.Id;
+                    fcr.SurveyDate = _model.CheckDate.Value;
+                    fcr.Quantity = 0;
+                    fcr.MassAmount = 0; // kg
+                    fcr.Weight = 0;
                     //fcr.Weight = 1000 / (fcr.Quantity / fcr.MassAmount); // gram
-                    //fcr.ProductName = "";
-                    //fcr.Id = await svcFeedConversionRate.Add(fcr);
+                    fcr.ProductName = livestock.Name;
+                    fcr.Id = await svcFeedConversionRate.Add(fcr);
 
                     //// Lịch sử đợt nuôi (master lịch sử ao nuôi)
                     //FarmingSeasonHistory history = new FarmingSeasonHistory();
