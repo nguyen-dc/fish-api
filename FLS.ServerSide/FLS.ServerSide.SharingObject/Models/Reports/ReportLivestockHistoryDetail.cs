@@ -30,5 +30,6 @@ namespace FLS.ServerSide.SharingObject
         public string MedicineName { get; set; }
         public decimal QtyDeadStock { get; set; }
         public decimal DeadStockMassAmount { get; set; }
+
     }
 }
